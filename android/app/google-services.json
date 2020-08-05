@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1001949503002",
+    "firebase_url": "https://seekdis-6115e.firebaseio.com",
+    "project_id": "seekdis-6115e",
+    "storage_bucket": "seekdis-6115e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001949503002:android:3d4c8059de19a68ae97ba3",
+        "android_client_info": {
+          "package_name": "com.example.SD"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001949503002-aa25r90vuo32fpc7ufc4rdtv7l0f4rhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA-VGrLTmYX4MGeG8VRq9DrtX2JZWP30s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001949503002-aa25r90vuo32fpc7ufc4rdtv7l0f4rhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
