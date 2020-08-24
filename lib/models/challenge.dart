@@ -5,7 +5,7 @@ class Challenge {
     String description;
     int numberViews;
     int numberLikes; 
-    int numberDislikes;
+    int  numberDislikes;
 
   Challenge(
       this.imageVal,
