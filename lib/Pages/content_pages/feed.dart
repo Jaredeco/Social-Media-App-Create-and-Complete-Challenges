@@ -32,7 +32,11 @@ class _FeedState extends State<Feed> {
               child: StreamBuilder(
                   stream: getUsersTripsStreamSnapshots(context),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) return Center(child: Container(width:40, height:40, child: CircularProgressIndicator()));
+                    if (!snapshot.hasData) return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height - 210,
+                      child: Center(child: Container(width:40, height:40, child: CircularProgressIndicator())),
+                    );
                     return new ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
