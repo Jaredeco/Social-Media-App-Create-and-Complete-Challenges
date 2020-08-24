@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:SD/models/challenge.dart';
 
-Widget myCardDetails(String imageVal, String taskName, String numberViews,
-    String numberLikes, String numberDislikes) {
+Widget myCardDetails(BuildContext context, DocumentSnapshot challenge) {
   return Padding(
     padding: const EdgeInsets.all(10.0),
     child: Material(
@@ -10,19 +11,20 @@ Widget myCardDetails(String imageVal, String taskName, String numberViews,
       borderRadius: BorderRadius.circular(24.0),
       shadowColor: Color(0x802196F3),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+        },
         child: Padding(
           padding: EdgeInsets.all(15.0),
           child: myCurrencies(
-              imageVal, taskName, numberViews, numberLikes, numberDislikes),
+              challenge["imageVal"], challenge["taskName"], challenge["numberViews"], challenge["numberLikes"], challenge["numberDislikes"]),
         ),
       ),
     ),
   );
 }
 
-Center myCurrencies(String imageVal, String taskName, String numberViews,
-    String numberLikes, String numberDislikes) {
+Center myCurrencies(String imageVal, String taskName, int numberViews,
+    int numberLikes, int numberDislikes) {
   return Center(
       child: Column(
     children: <Widget>[
@@ -90,7 +92,7 @@ Widget yesButton() {
 }
 
 Widget myTaskDetails(
-    String numberViews, String numberLikes, String numberDislikes) {
+    int numberViews, int numberLikes, int numberDislikes) {
   return Container(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -100,7 +102,7 @@ Widget myTaskDetails(
             Padding(
                 padding: EdgeInsets.only(right: 8),
                 child: Icon(Icons.remove_red_eye)),
-            Text(numberViews,
+            Text(numberViews.toString(),
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w800,
@@ -111,7 +113,7 @@ Widget myTaskDetails(
             child: Row(children: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 8), child: Icon(Icons.thumb_up)),
-          Text(numberLikes,
+          Text(numberLikes.toString(),
               style: TextStyle(
                 color: Colors.grey[700],
                 fontSize: 16.0,
@@ -123,7 +125,7 @@ Widget myTaskDetails(
           Padding(
               padding: EdgeInsets.only(right: 8),
               child: Icon(Icons.thumb_down)),
-          Text(numberLikes,
+          Text(numberLikes.toString(),
               style: TextStyle(
                 color: Colors.grey[700],
                 fontSize: 16.0,

@@ -13,7 +13,7 @@ class Profile extends StatelessWidget {
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [ Colors.redAccent, Colors.blue])),
+                          colors: [Colors.redAccent, Colors.blue])),
                   child: Container(
                     width: double.infinity,
                     height: 350.0,
@@ -24,7 +24,7 @@ class Profile extends StatelessWidget {
                         children: <Widget>[
                           CircleAvatar(
                             backgroundImage: NetworkImage(
-                              "https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg",
+                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQh_fjPn8xH95m4b5szGRcqBggqoUp_i4h8OQ&usqp=CAU",
                             ),
                             radius: 50.0,
                           ),
@@ -104,7 +104,7 @@ class Profile extends StatelessWidget {
                                     child: Column(
                                       children: <Widget>[
                                         Text(
-                                          "Follow",
+                                          "Following",
                                           style: TextStyle(
                                             color: Colors.redAccent,
                                             fontSize: 22.0,
@@ -140,6 +140,40 @@ class Profile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(bottom: 20),
+                        width: 120.00,
+                        child: RaisedButton(
+                            onPressed: () {},
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(80.0)),
+                            elevation: 0.0,
+                            padding: EdgeInsets.all(0.0),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.centerRight,
+                                    end: Alignment.centerLeft,
+                                    colors: [
+                                      Colors.redAccent,
+                                      Colors.pinkAccent
+                                    ]),
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                    maxWidth: 300.0, minHeight: 50.0),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Follow",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 19.0,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ),
+                            )),
+                      ),
                       Text(
                         "Bio:",
                         style: TextStyle(
@@ -169,6 +203,7 @@ class Profile extends StatelessWidget {
                 height: 20.0,
               ),
               Container(
+                padding: EdgeInsets.all(20),
                 width: 300.00,
                 child: RaisedButton(
                     onPressed: () {},

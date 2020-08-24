@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
         key: _bottomNavigationKey,
         height: 55,
         items: <Widget>[
-          Icon(Icons.assignment, size: 25),
+          Icon(Icons.explore, size: 25),
           Icon(Icons.bookmark, size: 25),
           Icon(Icons.account_circle, size: 25),
         ],

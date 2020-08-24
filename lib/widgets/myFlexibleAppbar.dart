@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
 class MyFlexibleAppBar extends StatelessWidget {
   final double appBarHeight = 66.0;
 
@@ -9,96 +7,90 @@ class MyFlexibleAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double statusBarHeight = MediaQuery
-        .of(context)
-        .padding
-        .top;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return new Container(
       padding: new EdgeInsets.only(top: statusBarHeight),
       height: statusBarHeight + appBarHeight,
       child: new Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(child: new Text(
-                        "Balance",
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: Text("Challenges",
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 36.0)),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text("created by users",
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 28.0
-                        )
-                    ),),
-                    Container(child: Text(
-                        "Tasks",
+                            color: Colors.white70, fontSize: 20.0)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0, left: 8.0),
+                    child: new Text("Total: 123",
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 36.0
-                        )
-                    ),),
-                  ],),),
-
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                          "Seek Discomfort",
-                          style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 20.0
-                          )
-                      ),
-                    ),),
-                  ],),
-              ),
-
-
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0,left:8.0),
-                      child: new Text(
-                          "Currency",
-                          style: const TextStyle(
-                              color: Colors.white70,
-                              fontFamily: 'Poppins',
-                              fontSize: 16.0
-                          )
-                      ),
-                    ),),
-
-                    Container(child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0,right:8.0),
-                      child: Container(
-                          child: Row(children: <Widget>[
-                            SizedBox(width: 10,),
-                            Container(child: Text(
-                              'Janaury 2019', style: const TextStyle(
+                            color: Colors.white70,
+                            fontFamily: 'Poppins',
+                            fontSize: 16.0)),
+                  ),
+                ),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0, right: 8.0),
+                    child: Container(
+                        child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          child: Text(
+                            'Janaury 2019',
+                            style: const TextStyle(
                                 color: Colors.white70,
                                 fontFamily: 'Poppins',
-                                fontSize: 16.0
-                            ),),),
-                          ],)
-
-                      ),
-                    ),),
-
-
-                  ],),
-              ),
-            ],)
-      ),
+                                fontSize: 16.0),
+                          ),
+                        ),
+                      ],
+                    )),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      )),
       decoration: new BoxDecoration(
-        color: Colors.blue,
+        image: DecorationImage(
+          fit: BoxFit.cover,
+            image: NetworkImage(
+                "https://i2.wp.com/gssmin.org/wp-content/uploads/2018/05/person-on-top-of-mountain.jpg?fit=700%2C421")),
       ),
     );
   }

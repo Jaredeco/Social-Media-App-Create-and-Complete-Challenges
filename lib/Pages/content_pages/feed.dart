@@ -2,6 +2,8 @@ import 'package:SD/widgets/myAppbar.dart';
 import 'package:SD/widgets/myFlexibleAppbar.dart';
 import 'package:flutter/material.dart';
 import 'package:SD/widgets/yescardContent.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:SD/widgets/provider_widget.dart';
 
 class Feed extends StatefulWidget {
   Feed({Key key}) : super(key: key);
@@ -14,32 +16,45 @@ class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: CustomScrollView(
-      slivers: <Widget>[
-        SliverAppBar(
-          title: MyAppBar(),
-          pinned: true,
-          expandedHeight: 210,
-          flexibleSpace: FlexibleSpaceBar(background: MyFlexibleAppBar()),
-        ),
-        SliverList(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            title: MyAppBar(),
+            pinned: true,
+            expandedHeight: 210,
+            flexibleSpace: FlexibleSpaceBar(background: MyFlexibleAppBar()),
+          ),
+          SliverList(
             delegate: SliverChildListDelegate(
-          <Widget>[
-            myCardDetails('assets/jupyter_logo.png', 'Jump from cliff', "4702",
-                "2000", "100"),
-            myCardDetails('assets/jupyter_logo.png', 'Take a cold shower', "4702",
-            "2000", "100"),
-            myCardDetails('assets/jupyter_logo.png', 'Travel to another country', "4702",
-            "2000", "100"),
-            myCardDetails('assets/jupyter_logo.png', 'Jump ton pool', "4702",
-            "2000", "100"),
-            myCardDetails('assets/jupyter_logo.png', 'Go running', "4702",
-            "2000", "100"),
-            myCardDetails('assets/jupyter_logo.png', 'Play foootball', "4702",
-            "2000", "100"),
-          ],
-        ))
-      ],
-    ));
+              <Widget>[
+            Container(
+              child: StreamBuilder(
+                  stream: getUsersTripsStreamSnapshots(context),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return Center(child: Container(width:40, height:40, child: CircularProgressIndicator()));
+                    return new ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            myCardDetails(
+                                context, snapshot.data.documents[index]));
+                  }),
+            ),],),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Stream<QuerySnapshot> getUsersTripsStreamSnapshots(
+      BuildContext context) async* {
+    final uid = await Provider.of(context).auth.getCurrentUID();
+    yield* Firestore.instance
+        .collection('userData')
+        .document(uid)
+        .collection('challenges')
+        .snapshots();
   }
 }

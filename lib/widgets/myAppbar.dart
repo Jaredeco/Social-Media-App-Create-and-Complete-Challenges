@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:SD/widgets/provider_widget.dart';
 import 'package:SD/services/auth_service.dart';
 import 'package:SD/Pages/content_pages/create_task.dart';
+import 'package:SD/models/challenge.dart';
 
 class MyAppBar extends StatelessWidget {
   final double barHeight = 66.0;
@@ -9,14 +10,16 @@ class MyAppBar extends StatelessWidget {
   const MyAppBar();
 
   @override
+  
   Widget build(BuildContext context) {
+    final newChallenge = new Challenge(null, null, null, null, null, null);
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           RawMaterialButton(
             onPressed: (){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateTask()),);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateTask(challenge:newChallenge)),);
             },
             fillColor: Colors.lightGreen,
             child: Icon(
