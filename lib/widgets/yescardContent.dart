@@ -47,7 +47,7 @@ Widget myLeadingDetails(String imageVal, String taskName) {
       Container(
         child: Image(
           height: 50.0,
-          image: AssetImage(imageVal),
+          image: NetworkImage(imageVal),
         ),
       ),
       SizedBox(

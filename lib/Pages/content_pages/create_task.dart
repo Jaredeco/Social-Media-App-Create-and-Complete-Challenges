@@ -17,6 +17,7 @@ class CreateTask extends StatefulWidget {
 }
 
 class _CreateTaskState extends State<CreateTask> {
+  String _imageUrl;
   final db = Firestore.instance;
   File _image;
   TextEditingController _nameController = TextEditingController();
@@ -26,7 +27,6 @@ class _CreateTaskState extends State<CreateTask> {
   Widget build(BuildContext context) {
     Future getImage() async {
       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
       setState(() {
         _image = image;
       });
@@ -34,10 +34,14 @@ class _CreateTaskState extends State<CreateTask> {
 
     Future uploadPic(BuildContext context) async {
       String fileName = basename(_image.path);
-      StorageReference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child(fileName);
+      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
       StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      var _downurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+      var _url = _downurl.toString();
+      print(_url);
+      setState(() {
+        _imageUrl = _url;
+      });
     }
 
     return Scaffold(
@@ -162,10 +166,11 @@ class _CreateTaskState extends State<CreateTask> {
                       color: Color(0xff476cfb),
                       onPressed: () async {
                         if (_image != null) {
+                          print(_imageUrl)
                           widget.challenge.taskName = _nameController.text;
                           widget.challenge.description =
                               _descriptionController.text;
-                          widget.challenge.imageVal = _image.path;
+                          widget.challenge.imageVal = _imageUrl;
                           widget.challenge.numberDislikes = 0;
                           widget.challenge.numberLikes = 0;
                           widget.challenge.numberViews = 0;
@@ -178,7 +183,7 @@ class _CreateTaskState extends State<CreateTask> {
                               .collection("challenges")
                               .add(widget.challenge.toJson());
                           Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => Home()));
+                              MaterialPageRoute(builder: (context) => Home(page_index: 0,)));
                         }else{
                           Scaffold.of(context).showSnackBar(
                             SnackBar(content: Text("Please, upload the picture!"),)

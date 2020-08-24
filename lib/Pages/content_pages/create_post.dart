@@ -1,4 +1,4 @@
-import 'package:SD/Pages/content_pages/posts.dart';
+import 'package:SD/Pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -177,7 +177,7 @@ class _CreatePostState extends State<CreatePost> {
                               .collection("posts")
                               .add(widget.post.toJson());
                           Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => Posts()));
+                              MaterialPageRoute(builder: (context) => Home(page_index: 1)));
                         }else{
                           Scaffold.of(context).showSnackBar(
                             SnackBar(content: Text("Please, upload the picture!"),)

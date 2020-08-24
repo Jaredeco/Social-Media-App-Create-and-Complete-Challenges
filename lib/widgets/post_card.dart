@@ -16,16 +16,19 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: NetworkImage(
-                            "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
-                          ),
-                          fit: BoxFit.cover)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 13, top: 8),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: NetworkImage(
+                              "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
+                            ),
+                            fit: BoxFit.cover)),
+                  ),
                 ),
                 SizedBox(
                   width: 10,
@@ -35,8 +38,7 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                   style: TextStyle(
                       color: Colors.grey[900],
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1),
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 3,
@@ -56,22 +58,23 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
         SizedBox(
           height: 20,
         ),
-        Text(
-          post["postText"],
-          style: TextStyle(
-              fontSize: 15,
+        Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Text(
+            post["postText"],
+            style: TextStyle(
+              fontSize: 17,
               color: Colors.grey[800],
-              height: 1.5,
-              letterSpacing: .7),
+            ),
+          ),
         ),
         SizedBox(
           height: 20,
         ),
         post["postImage"] != ''
             ? Container(
-                height: 200,
+                height: 300,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                         image: AssetImage(post["postImage"]),
                         fit: BoxFit.cover)),
@@ -95,9 +98,12 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                 )
               ],
             ),
-            Text(
-              post["numberComments"].toString() + "Comments",
-              style: TextStyle(fontSize: 13, color: Colors.grey[800]),
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Text(
+                post["numberComments"].toString() + " Comments",
+                style: TextStyle(fontSize: 15, color: Colors.grey[800]),
+              ),
             )
           ],
         ),
@@ -105,11 +111,10 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
           height: 20,
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             makeLikeButton(isActive: false),
             makeCommentButton(),
-            makeShareButton(),
           ],
         )
       ],
@@ -118,15 +123,18 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
 }
 
 Widget makeLike() {
-  return Container(
-    width: 25,
-    height: 25,
-    decoration: BoxDecoration(
-        color: Colors.blue,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white)),
-    child: Center(
-      child: Icon(Icons.thumb_up, size: 12, color: Colors.white),
+  return Padding(
+    padding: const EdgeInsets.only(left: 8),
+    child: Container(
+      width: 25,
+      height: 25,
+      decoration: BoxDecoration(
+          color: Colors.blue,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white)),
+      child: Center(
+        child: Icon(Icons.thumb_up, size: 12, color: Colors.white),
+      ),
     ),
   );
 }
@@ -177,31 +185,6 @@ Widget makeCommentButton() {
           ),
           Text(
             "Comment",
-            style: TextStyle(color: Colors.grey),
-          )
-        ],
-      ),
-    ),
-  );
-}
-
-Widget makeShareButton() {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey[200]),
-      borderRadius: BorderRadius.circular(50),
-    ),
-    child: Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(Icons.share, color: Colors.grey, size: 18),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            "Share",
             style: TextStyle(color: Colors.grey),
           )
         ],

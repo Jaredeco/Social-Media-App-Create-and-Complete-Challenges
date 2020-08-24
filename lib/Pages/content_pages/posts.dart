@@ -20,8 +20,8 @@ class _PostsState extends State<Posts> {
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            return Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => CreatePost(post: newPost)));
+            return Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CreatePost(post: newPost)));
           }),
       body: ListView(
         children: <Widget>[

@@ -5,7 +5,8 @@ import 'package:SD/Pages/content_pages/posts.dart';
 import 'package:SD/Pages/content_pages/profile.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+  int page_index; 
+  Home({Key key, @required this.page_index}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -13,9 +14,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Widget> _tabItems = [Feed(), Posts(), Profile()];
-  int _activePage = 0;
   GlobalKey _bottomNavigationKey = GlobalKey();
+  int _activePage = 0;
   @override
+  void initState() {
+    _activePage = widget.page_index;
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
@@ -23,7 +27,7 @@ class _HomeState extends State<Home> {
         color: Colors.blue,
         backgroundColor: Colors.transparent,
         animationDuration: Duration(milliseconds: 250),
-        index: 0,
+        index: _activePage,
         animationCurve: Curves.bounceInOut,
         key: _bottomNavigationKey,
         height: 55,

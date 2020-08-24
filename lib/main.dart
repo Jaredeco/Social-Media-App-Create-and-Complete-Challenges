@@ -16,18 +16,21 @@ class MyApp extends StatelessWidget {
     return Provider(
       auth: AuthService(),
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'SD',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: HomeController(),
-        routes: <String, WidgetBuilder>{
-          '/home': (BuildContext context) => HomeController(),
-          '/signUp': (BuildContext context) => SignUpView(authFormType: AuthFormType.signUp,),
-          '/signIn': (BuildContext context) => SignUpView(authFormType: AuthFormType.signIn),
-        }),
+          debugShowCheckedModeBanner: false,
+          title: 'SD',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: HomeController(),
+          routes: <String, WidgetBuilder>{
+            '/home': (BuildContext context) => HomeController(),
+            '/signUp': (BuildContext context) => SignUpView(
+                  authFormType: AuthFormType.signUp,
+                ),
+            '/signIn': (BuildContext context) =>
+                SignUpView(authFormType: AuthFormType.signIn),
+          }),
     );
   }
 }
@@ -41,7 +44,11 @@ class HomeController extends StatelessWidget {
       builder: (context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final bool signedIn = snapshot.hasData;
-          return signedIn ? Home() : FirstView();
+          return signedIn
+              ? Home(
+                  page_index: 0,
+                )
+              : FirstView();
         }
         return CircularProgressIndicator();
       },
