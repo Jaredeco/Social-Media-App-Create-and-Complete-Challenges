@@ -19,6 +19,7 @@ class CreatePost extends StatefulWidget {
 class _CreatePostState extends State<CreatePost> {
   final db = Firestore.instance;
   File _image;
+  var imageUrl;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
 
@@ -37,7 +38,11 @@ class _CreatePostState extends State<CreatePost> {
       StorageReference firebaseStorageRef =
           FirebaseStorage.instance.ref().child(fileName);
       StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      var _downurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+      var _url = _downurl.toString();
+      setState(() {
+        imageUrl = _url;
+      });
     }
 
     return Scaffold(
@@ -162,13 +167,13 @@ class _CreatePostState extends State<CreatePost> {
                       color: Color(0xff476cfb),
                       onPressed: () async {
                         if (_image != null) {
+                          await uploadPic(context);
                           widget.post.userName = _nameController.text;
-                          widget.post.userImage = "";
+                          widget.post.userImage = imageUrl;
                           widget.post.postText = _descriptionController.text;
                           widget.post.postImage = _image.path;
                           widget.post.numberLikes = 0;
                           widget.post.numberComments = 0;
-                          uploadPic(context);
                           final uid =
                               await Provider.of(context).auth.getCurrentUID();
                           await db
