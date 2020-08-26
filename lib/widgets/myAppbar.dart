@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:SD/widgets/provider_widget.dart';
 import 'package:SD/services/auth_service.dart';
-import 'package:SD/Pages/content_pages/create_task.dart';
+import 'package:SD/create_pages/create_task.dart';
 import 'package:SD/models/challenge.dart';
 
 class MyAppBar extends StatelessWidget {

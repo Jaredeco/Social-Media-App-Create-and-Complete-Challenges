@@ -169,9 +169,9 @@ class _CreatePostState extends State<CreatePost> {
                         if (_image != null) {
                           await uploadPic(context);
                           widget.post.userName = _nameController.text;
-                          widget.post.userImage = imageUrl;
+                          widget.post.userImage = "";
                           widget.post.postText = _descriptionController.text;
-                          widget.post.postImage = _image.path;
+                          widget.post.postImage = imageUrl;
                           widget.post.numberLikes = 0;
                           widget.post.numberComments = 0;
                           final uid =

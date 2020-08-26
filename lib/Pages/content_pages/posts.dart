@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:SD/widgets/post_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/provider_widget.dart';
-import 'create_post.dart';
+import '../../create_pages/create_post.dart';
 import 'package:SD/models/post.dart';
 
 class Posts extends StatefulWidget {

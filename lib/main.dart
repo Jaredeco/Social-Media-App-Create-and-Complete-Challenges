@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'services/auth_service.dart';
 import 'widgets/provider_widget.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       auth: AuthService(),
+      db: Firestore.instance,
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'SD',

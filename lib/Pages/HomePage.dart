@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:SD/Pages/content_pages/feed.dart';
 import 'package:SD/Pages/content_pages/posts.dart';
-import 'package:SD/Pages/content_pages/profile.dart';
+import 'package:SD/Pages/content_pages/Myprofile.dart';
+import 'package:SD/models/user_info.dart';
 
 class Home extends StatefulWidget {
   int page_index; 
@@ -13,7 +14,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final List<Widget> _tabItems = [Feed(), Posts(), Profile()];
+  final List<Widget> _tabItems = [Feed(), Posts(), MyProfile()];
   GlobalKey _bottomNavigationKey = GlobalKey();
   int _activePage = 0;
   @override

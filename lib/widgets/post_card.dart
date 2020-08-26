@@ -76,7 +76,7 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                 height: 300,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage(post["postImage"]),
+                        image: NetworkImage(post["postImage"]),
                         fit: BoxFit.cover)),
               )
             : Container(),

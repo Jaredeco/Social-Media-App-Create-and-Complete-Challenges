@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:SD/services/auth_service.dart';
 import 'package:SD/widgets/provider_widget.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:SD/models/user_info.dart';
 
 final primaryColor = const Color(0xFF75A2EA);
 enum AuthFormType { signIn, signUp, reset }
@@ -275,6 +277,24 @@ class _SignUpViewState extends State<SignUpView> {
         } else {
           String uid = await auth.createUserWithEmailAndPassword(
               _email, _password, _name);
+          final snapShot = await Firestore.instance
+              .collection('userData')
+              .document(uid)
+              .get();
+          UserInfo _userInfo = UserInfo(
+              "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/image_picker395842049722564467.jpg?alt=media&token=2caf99fa-1d76-47ae-b012-5f0abaaa021b",
+              _name,
+              "",
+              0,
+              0,
+              uid.toString());
+          if (snapShot == null || !snapShot.exists) {
+            await Provider.of(context)
+                .db
+                .collection('userData')
+                .document(uid)
+                .setData(_userInfo.toJson());
+          }
           Navigator.of(context).pushReplacementNamed('/home');
         }
       } catch (e) {
@@ -314,7 +334,27 @@ class _SignUpViewState extends State<SignUpView> {
           GoogleSignInButton(
             onPressed: () async {
               try {
-                await _auth.signInWithGoogle();
+                final _listvals = await _auth.signInWithGoogle();
+                final _uid = _listvals[0];
+                final _name = _listvals[1];
+                final snapShot = await Firestore.instance
+                    .collection('userData')
+                    .document(_uid)
+                    .get();
+                UserInfo _userInfo = UserInfo(
+                    "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/image_picker395842049722564467.jpg?alt=media&token=2caf99fa-1d76-47ae-b012-5f0abaaa021b",
+                    _name,
+                    "",
+                    0,
+                    0,
+                    _uid);
+                if (snapShot == null || !snapShot.exists) {
+                  await Provider.of(context)
+                      .db
+                      .collection('userData')
+                      .document(_uid)
+                      .setData(_userInfo.toJson());
+                }
                 Navigator.of(context).pushReplacementNamed('/home');
               } catch (e) {
                 setState(() {

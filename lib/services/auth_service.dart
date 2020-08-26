@@ -13,6 +13,10 @@ class AuthService {
   Future<String> getCurrentUID() async {
     return (await _firebaseAuth.currentUser()).uid;
   }
+  //Get current user
+  Future getCurrentUser() async{
+    return await _firebaseAuth.currentUser();
+  }
 
   // Email & Password Sign Up
   Future<String> createUserWithEmailAndPassword(
@@ -52,12 +56,15 @@ class AuthService {
     return _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
-  Future<String> signInWithGoogle() async {
+  Future<List> signInWithGoogle() async {
     final GoogleSignInAccount account = await _googleSignIn.signIn();
     final GoogleSignInAuthentication _googleAuth = await account.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
         idToken: _googleAuth.idToken, accessToken: _googleAuth.accessToken);
-    return (await _firebaseAuth.signInWithCredential(credential)).user.uid;
+    final _uid = (await _firebaseAuth.signInWithCredential(credential)).user.uid.toString();
+    final _name = (await _firebaseAuth.signInWithCredential(credential)).user.displayName;
+    final _returnvals = [_uid, _name];
+    return _returnvals;
   }
 }
 
