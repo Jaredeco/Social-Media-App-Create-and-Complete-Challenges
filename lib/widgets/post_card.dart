@@ -1,125 +1,156 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:SD/models/user_info.dart';
+import 'package:SD/widgets/provider_widget.dart';
+import 'package:flutter/rendering.dart';
 
 Widget makeFeed(BuildContext context, DocumentSnapshot post) {
-  return Container(
-    margin: EdgeInsets.only(bottom: 20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 15,
-          color: Colors.grey[200],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
+  UserInfo _userInfo = UserInfo(null, null, null, null, null, null, null);
+  _getProfileData() async {
+    final uid = await Provider.of(context).auth.getCurrentUID();
+    await Provider.of(context)
+        .db
+        .collection('userData')
+        .document(uid)
+        .get()
+        .then((result) {
+      _userInfo.userName = result.data['userName'];
+      _userInfo.userImage = result.data['userImage'];
+      _userInfo.bio = result.data['bio'];
+      _userInfo.uid = result.data['uid'];
+      _userInfo.followers = result.data['followers'];
+      _userInfo.following = result.data['following'];
+      _userInfo.completed = result.data['completed'];
+    });
+  }
+
+  return FutureBuilder(
+      future: _getProfileData(),
+      builder: (context1, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Container(
+            margin: EdgeInsets.only(bottom: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Container(
+                  height: 15,
+                  color: Colors.grey[200],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 13, top: 8),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                      "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
+                                    ),
+                                    fit: BoxFit.cover)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          _userInfo.userName,
+                          style: TextStyle(
+                              color: Colors.grey[900],
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 3,
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.more_horiz,
+                        size: 30,
+                        color: Colors.grey[600],
+                      ),
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 13, top: 8),
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: NetworkImage(
-                              "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
-                            ),
-                            fit: BoxFit.cover)),
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    post["postText"],
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey[800],
+                    ),
                   ),
                 ),
                 SizedBox(
-                  width: 10,
+                  height: 20,
                 ),
-                Text(
-                  post["userName"],
-                  style: TextStyle(
-                      color: Colors.grey[900],
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                post["postImage"] != ''
+                    ? Container(
+                        height: 300,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(post["postImage"]),
+                                fit: BoxFit.cover)),
+                      )
+                    : Container(),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        makeLike(),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          post["numberLikes"].toString(),
+                          style:
+                              TextStyle(fontSize: 15, color: Colors.grey[800]),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Text(
+                        post["numberComments"].toString() + " Comments",
+                        style: TextStyle(fontSize: 15, color: Colors.grey[800]),
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(
-                  height: 3,
+                  height: 20,
                 ),
-              ],
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                size: 30,
-                color: Colors.grey[600],
-              ),
-              onPressed: () {},
-            )
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Text(
-            post["postText"],
-            style: TextStyle(
-              fontSize: 17,
-              color: Colors.grey[800],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        post["postImage"] != ''
-            ? Container(
-                height: 300,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(post["postImage"]),
-                        fit: BoxFit.cover)),
-              )
-            : Container(),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                makeLike(),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  post["numberLikes"].toString(),
-                  style: TextStyle(fontSize: 15, color: Colors.grey[800]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    makeLikeButton(isActive: false),
+                    makeCommentButton(),
+                  ],
                 )
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Text(
-                post["numberComments"].toString() + " Comments",
-                style: TextStyle(fontSize: 15, color: Colors.grey[800]),
-              ),
-            )
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            makeLikeButton(isActive: false),
-            makeCommentButton(),
-          ],
-        )
-      ],
-    ),
-  );
+          );
+        } else {
+          return Container();
+        }
+      });
 }
 
 Widget makeLike() {

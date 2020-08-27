@@ -15,7 +15,7 @@ class Posts extends StatefulWidget {
 class _PostsState extends State<Posts> {
   @override
   Widget build(BuildContext context) {
-    final newPost = new Post(null, null, null, null, null, null);
+    final newPost = new Post(null, null, null, null, null);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),

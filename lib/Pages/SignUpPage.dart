@@ -282,9 +282,10 @@ class _SignUpViewState extends State<SignUpView> {
               .document(uid)
               .get();
           UserInfo _userInfo = UserInfo(
-              "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/image_picker395842049722564467.jpg?alt=media&token=2caf99fa-1d76-47ae-b012-5f0abaaa021b",
+              "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/junior-ferreira-7esRPTt38nI-unsplash.jpg?alt=media&token=248c2d71-71cf-4683-ab01-484dae2c3028",
               _name,
               "",
+              0,
               0,
               0,
               uid.toString());
@@ -342,9 +343,10 @@ class _SignUpViewState extends State<SignUpView> {
                     .document(_uid)
                     .get();
                 UserInfo _userInfo = UserInfo(
-                    "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/image_picker395842049722564467.jpg?alt=media&token=2caf99fa-1d76-47ae-b012-5f0abaaa021b",
+                    "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/junior-ferreira-7esRPTt38nI-unsplash.jpg?alt=media&token=248c2d71-71cf-4683-ab01-484dae2c3028",
                     _name,
                     "",
+                    0,
                     0,
                     0,
                     _uid);

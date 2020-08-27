@@ -131,7 +131,7 @@ class _CreateTaskState extends State<CreateTask> {
                           controller: _descriptionController,
                           maxLines: 8,
                           keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(
+                          decoration: InputDecoration(  
                             border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.blue),
                               borderRadius: const BorderRadius.all(

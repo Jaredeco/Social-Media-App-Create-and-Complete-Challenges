@@ -1,26 +1,28 @@
+import 'package:SD/create_pages/update_profile_pic.dart';
 import 'package:flutter/material.dart';
 import 'package:SD/models/user_info.dart';
 import 'package:SD/widgets/provider_widget.dart';
 
 class MyProfile extends StatefulWidget {
-  MyProfile({Key key}) : super(key: key);
+  var pushedUrl;
+  MyProfile({Key key, this.pushedUrl}) : super(key: key);
   @override
   _MyProfileState createState() => _MyProfileState();
 }
 
 class _MyProfileState extends State<MyProfile> {
-  UserInfo _userInfo = UserInfo("", "", "", 0, 0, "");
-  TextEditingController _userCountryController = TextEditingController();
+  UserInfo _userInfo = UserInfo("", "", "", 0, 0, 0, "");
+  TextEditingController _userBioController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          FutureBuilder(
-              future: _getProfileData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Column(
+      body: FutureBuilder(
+          future: _getProfileData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return ListView(
+                children: <Widget>[
+                  Column(
                     children: <Widget>[
                       Container(
                           decoration: BoxDecoration(
@@ -36,20 +38,45 @@ class _MyProfileState extends State<MyProfile> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      "${_userInfo.userImage}",
-                                    ),
-                                    radius: 50.0,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: CircleAvatar(
+                                          backgroundImage: widget.pushedUrl != null ?
+                                          NetworkImage(
+                                            widget.pushedUrl):
+                                          NetworkImage(
+                                            "${_userInfo.userImage}",
+                                          ),
+                                          radius: 50.0,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 60.0),
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.edit,
+                                            size: 30.0,
+                                          ),
+                                          onPressed: () {    
+                                            _awaitReturnValueFromSecondScreen(context);
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
                                     height: 10.0,
                                   ),
-                                  Text(
-                                    "${_userInfo.userName}",
-                                    style: TextStyle(
-                                      fontSize: 22.0,
-                                      color: Colors.white,
+                                  Center(
+                                    child: Text(
+                                      "${_userInfo.userName}",
+                                      style: TextStyle(
+                                        fontSize: 22.0,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
@@ -70,7 +97,7 @@ class _MyProfileState extends State<MyProfile> {
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                  "Posts",
+                                                  "Completed",
                                                   style: TextStyle(
                                                     color: Colors.redAccent,
                                                     fontSize: 22.0,
@@ -81,7 +108,7 @@ class _MyProfileState extends State<MyProfile> {
                                                   height: 5.0,
                                                 ),
                                                 Text(
-                                                  "5200",
+                                                  "${_userInfo.completed}",
                                                   style: TextStyle(
                                                     fontSize: 20.0,
                                                     color: Colors.pinkAccent,
@@ -260,51 +287,15 @@ class _MyProfileState extends State<MyProfile> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        width: 300.00,
-                        child: RaisedButton(
-                            onPressed: () {},
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(80.0)),
-                            elevation: 0.0,
-                            padding: EdgeInsets.all(0.0),
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.centerRight,
-                                    end: Alignment.centerLeft,
-                                    colors: [
-                                      Colors.redAccent,
-                                      Colors.pinkAccent
-                                    ]),
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              child: Container(
-                                constraints: BoxConstraints(
-                                    maxWidth: 300.0, minHeight: 50.0),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Contact me",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26.0,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                              ),
-                            )),
-                      ),
                     ],
-                  );
-                } else {
-                  return CircularProgressIndicator();
-                }
-              }),
-        ],
-      ),
+                  ),
+                ],
+              );
+            } else {
+              return Container();
+                  // child: Center(child: CircularProgressIndicator())
+            }
+          }),
     );
   }
 
@@ -322,6 +313,7 @@ class _MyProfileState extends State<MyProfile> {
       _userInfo.uid = result.data['uid'];
       _userInfo.followers = result.data['followers'];
       _userInfo.following = result.data['following'];
+      _userInfo.completed = result.data['completed'];
     });
   }
 
@@ -330,7 +322,7 @@ class _MyProfileState extends State<MyProfile> {
       context: context,
       builder: (BuildContext bc) {
         return Container(
-          height: MediaQuery.of(context).size.height * .60,
+          height: MediaQuery.of(context).size.height,
           child: Padding(
             padding: const EdgeInsets.only(left: 15.0, top: 15.0),
             child: Column(
@@ -355,9 +347,9 @@ class _MyProfileState extends State<MyProfile> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 15.0),
                         child: TextField(
-                          controller: _userCountryController,
+                          controller: _userBioController,
                           decoration: InputDecoration(
-                            helperText: "Home Country",
+                            helperText: "Bio",
                           ),
                         ),
                       ),
@@ -372,9 +364,9 @@ class _MyProfileState extends State<MyProfile> {
                       color: Colors.green,
                       textColor: Colors.white,
                       onPressed: () async {
-                        _userInfo.userName = _userCountryController.text;
+                        _userInfo.bio = _userBioController.text;
                         setState(() {
-                          _userCountryController.text = _userInfo.userName;
+                          _userBioController.text = _userInfo.bio;
                         });
                         final uid =
                             await Provider.of(context).auth.getCurrentUID();
@@ -394,5 +386,15 @@ class _MyProfileState extends State<MyProfile> {
         );
       },
     );
+  }
+  void _awaitReturnValueFromSecondScreen(BuildContext context) async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UpdateProfPic(userInfo: _userInfo,),
+        ));
+    setState(() {
+      widget.pushedUrl = result;
+    });
   }
 }

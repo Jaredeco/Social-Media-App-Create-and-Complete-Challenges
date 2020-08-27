@@ -89,8 +89,8 @@ class MyFlexibleAppBar extends StatelessWidget {
       decoration: new BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-            image: NetworkImage(
-                "https://i2.wp.com/gssmin.org/wp-content/uploads/2018/05/person-on-top-of-mountain.jpg?fit=700%2C421")),
+            image: AssetImage(
+                "assets/top_mount_per.jpg")),
       ),
     );
   }

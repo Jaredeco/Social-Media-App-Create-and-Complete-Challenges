@@ -168,14 +168,12 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () async {
                         if (_image != null) {
                           await uploadPic(context);
-                          widget.post.userName = _nameController.text;
-                          widget.post.userImage = "";
+                          final uid = await Provider.of(context).auth.getCurrentUID();
+                          widget.post.uid = uid.toString();
                           widget.post.postText = _descriptionController.text;
                           widget.post.postImage = imageUrl;
                           widget.post.numberLikes = 0;
                           widget.post.numberComments = 0;
-                          final uid =
-                              await Provider.of(context).auth.getCurrentUID();
                           await db
                               .collection("userData")
                               .document(uid)

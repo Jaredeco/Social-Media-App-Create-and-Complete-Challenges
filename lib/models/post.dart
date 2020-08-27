@@ -1,13 +1,11 @@
 class Post {
-    String userImage; 
-    String userName;
+    String uid; 
     String postText;
     String postImage;
     int numberLikes;
     int numberComments;
   Post(
-      this.userImage,
-      this.userName,
+      this.uid,
       this.postText,
       this.postImage,
       this.numberLikes,
@@ -15,8 +13,7 @@ class Post {
       );
 
   Map<String, dynamic> toJson() => {
-    'userImage':userImage,
-    'userName':userName,
+    'uid':uid,
     'postText':postText,
     'postImage':postImage,
     'numberLikes':numberLikes,

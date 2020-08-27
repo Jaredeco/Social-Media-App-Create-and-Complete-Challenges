@@ -4,6 +4,7 @@ class UserInfo {
     String bio;
     int followers;
     int following;
+    int completed;
     String uid;
   UserInfo(
       this.userImage,
@@ -11,6 +12,7 @@ class UserInfo {
       this.bio,
       this.followers,
       this.following,
+      this.completed,
       this.uid,
       );
 
@@ -20,6 +22,7 @@ class UserInfo {
     'bio':bio,
     'followers':followers,
     'following':following,
+    'completed':completed,
     'uid':uid,
   };
 }
