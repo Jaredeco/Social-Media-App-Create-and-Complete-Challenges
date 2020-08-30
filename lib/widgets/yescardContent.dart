@@ -1,52 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:SD/models/challenge.dart';
 
 Widget myCardDetails(BuildContext context, DocumentSnapshot challenge) {
-  return Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: Material(
-      color: Colors.white,
-      elevation: 14.0,
-      borderRadius: BorderRadius.circular(24.0),
-      shadowColor: Color(0x802196F3),
-      child: InkWell(
-        onTap: () {
-        },
-        child: Padding(
-          padding: EdgeInsets.all(15.0),
-          child: myCurrencies(
-              challenge["imageVal"], challenge["taskName"], challenge["numberViews"], challenge["numberLikes"], challenge["numberDislikes"]),
-        ),
-      ),
-    ),
-  );
+  return myCard(
+      challenge["imageVal"],
+      challenge["taskName"],
+      challenge["numberViews"],
+      challenge["numberLikes"],
+      challenge["numberDislikes"]);
 }
 
-Center myCurrencies(String imageVal, String taskName, int numberViews,
+Widget myCard(String imageVal, String taskName, int numberViews,
     int numberLikes, int numberDislikes) {
-  return Center(
+  return Card(
+      margin: EdgeInsets.all(20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       child: Column(
-    children: <Widget>[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          myLeadingDetails(imageVal, taskName),
-          yesButton(),
-          myTaskDetails(numberViews, numberLikes, numberDislikes),
+        children: [
+          ClipRRect(
+            
+            borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
+            child: Align(
+              heightFactor: 0.7,
+            child:Image.network(imageVal)),
+          ),
+          Container(
+            alignment: Alignment.topLeft,
+            padding: EdgeInsets.all(30),
+            child: Text(taskName, style: TextStyle(fontSize:20, fontWeight: FontWeight.bold),),
+          )
         ],
-      )
+      ));
+}
+
+Widget myData(String imageVal, String taskName, int numberViews,
+    int numberLikes, int numberDislikes) {
+  return Column(
+    children: <Widget>[
+      myLeadingDetails(imageVal, taskName),
+      yesButton(),
+      myTaskDetails(numberViews, numberLikes, numberDislikes),
     ],
-  ));
+  );
 }
 
 Widget myLeadingDetails(String imageVal, String taskName) {
   return Container(
-      child: Row(
+      child: Column(
     children: <Widget>[
       Container(
         child: Image(
-          height: 50.0,
           image: NetworkImage(imageVal),
         ),
       ),
@@ -91,8 +94,7 @@ Widget yesButton() {
   ]);
 }
 
-Widget myTaskDetails(
-    int numberViews, int numberLikes, int numberDislikes) {
+Widget myTaskDetails(int numberViews, int numberLikes, int numberDislikes) {
   return Container(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

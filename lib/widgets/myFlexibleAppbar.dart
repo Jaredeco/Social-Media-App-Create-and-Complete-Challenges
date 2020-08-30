@@ -8,7 +8,6 @@ class MyFlexibleAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-
     return new Container(
       padding: new EdgeInsets.only(top: statusBarHeight),
       height: statusBarHeight + appBarHeight,

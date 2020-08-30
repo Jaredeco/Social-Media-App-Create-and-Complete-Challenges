@@ -2,16 +2,18 @@ class UserInfo {
     String userImage; 
     String userName;
     String bio;
-    int followers;
-    int following;
+    int numberFollowers;
+    int numberFollowing;
     int completed;
     String uid;
+    // List<String> followers;
+    // List<String> following;
   UserInfo(
       this.userImage,
       this.userName,
       this.bio,
-      this.followers,
-      this.following,
+      this.numberFollowers,
+      this.numberFollowing,
       this.completed,
       this.uid,
       );
@@ -20,8 +22,8 @@ class UserInfo {
     'userImage':userImage,
     'userName':userName,
     'bio':bio,
-    'followers':followers,
-    'following':following,
+    'numberFollowers':numberFollowers,
+    'numberFollowing':numberFollowing,
     'completed':completed,
     'uid':uid,
   };

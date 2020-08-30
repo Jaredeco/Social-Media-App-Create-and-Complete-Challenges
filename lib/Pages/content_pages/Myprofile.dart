@@ -132,7 +132,7 @@ class _MyProfileState extends State<MyProfile> {
                                                   height: 5.0,
                                                 ),
                                                 Text(
-                                                  "${_userInfo.followers}",
+                                                  "${_userInfo.numberFollowers}",
                                                   style: TextStyle(
                                                     fontSize: 20.0,
                                                     color: Colors.pinkAccent,
@@ -156,7 +156,7 @@ class _MyProfileState extends State<MyProfile> {
                                                   height: 5.0,
                                                 ),
                                                 Text(
-                                                  "${_userInfo.following}",
+                                                  "${_userInfo.numberFollowing}",
                                                   style: TextStyle(
                                                     fontSize: 20.0,
                                                     color: Colors.pinkAccent,
@@ -311,8 +311,8 @@ class _MyProfileState extends State<MyProfile> {
       _userInfo.userImage = result.data['userImage'];
       _userInfo.bio = result.data['bio'];
       _userInfo.uid = result.data['uid'];
-      _userInfo.followers = result.data['followers'];
-      _userInfo.following = result.data['following'];
+      _userInfo.numberFollowers = result.data['numberFollowers'];
+      _userInfo.numberFollowing = result.data['numberFollowing'];
       _userInfo.completed = result.data['completed'];
     });
   }

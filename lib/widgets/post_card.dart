@@ -18,8 +18,8 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
       _userInfo.userImage = result.data['userImage'];
       _userInfo.bio = result.data['bio'];
       _userInfo.uid = result.data['uid'];
-      _userInfo.followers = result.data['followers'];
-      _userInfo.following = result.data['following'];
+      _userInfo.numberFollowers = result.data['numberFollowers'];
+      _userInfo.numberFollowing = result.data['numberFollowing'];
       _userInfo.completed = result.data['completed'];
     });
   }

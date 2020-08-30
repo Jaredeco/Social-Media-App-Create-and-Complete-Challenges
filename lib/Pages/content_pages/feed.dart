@@ -15,6 +15,7 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
+    var allheight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
@@ -22,7 +23,7 @@ class _FeedState extends State<Feed> {
             automaticallyImplyLeading: false,
             title: MyAppBar(),
             pinned: true,
-            expandedHeight: 210,
+            expandedHeight: allheight * 0.45,
             flexibleSpace: FlexibleSpaceBar(background: MyFlexibleAppBar()),
           ),
           SliverList(
