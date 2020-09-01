@@ -1,9 +1,11 @@
+import 'package:SD/Pages/content_pages/Myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:SD/widgets/post_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/provider_widget.dart';
 import '../../create_pages/create_post.dart';
 import 'package:SD/models/post.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Posts extends StatefulWidget {
   Posts({Key key}) : super(key: key);
@@ -17,47 +19,55 @@ class _PostsState extends State<Posts> {
   Widget build(BuildContext context) {
     final newPost = new Post(null, null, null, null, null);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: InkWell(
+            customBorder: CircleBorder(),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>MyProfile()));
+            },
+            child: CachedNetworkImage(
+              imageUrl:
+                  "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+              imageBuilder: (context, imageProvider) => Container(
+                width: 80.0,
+                height: 80.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image:
+                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                ),
+              ),
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          ),
+        ),
+        title: Text(
+          "Posts",
+          style: TextStyle(
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+        ),
+        actions: <Widget>[
+          IconButton(
+            padding: EdgeInsets.all(10.0),
+            icon: Icon(Icons.search),
+            onPressed: () {},
+            color: Colors.blue[800],
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
+        backgroundColor: Colors.white,
+          child: Icon(Icons.add, color: Colors.blue[800],),
           onPressed: () {
             return Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CreatePost(post: newPost)));
           }),
       body: ListView(
         children: <Widget>[
-          Container(
-            height: 70,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                SizedBox(width: 15),
-                Expanded(
-                    child: Container(
-                  padding: EdgeInsets.only(left: 21),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.grey[200]),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey),
-                      hintText: "Search",
-                    ),
-                  ),
-                )),
-                RawMaterialButton(
-                  onPressed: () {},
-                  fillColor: Colors.blue,
-                  child: Icon(
-                    Icons.search,
-                    size: 23.0,
-                  ),
-                  padding: EdgeInsets.all(10.0),
-                  shape: CircleBorder(),
-                ),
-              ],
-            ),
-          ),
           Container(
             child: StreamBuilder(
                 stream: getUsersTripsStreamSnapshots(context),

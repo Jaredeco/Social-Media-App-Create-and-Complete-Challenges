@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/models/user_info.dart';
 import 'package:SD/widgets/provider_widget.dart';
 import 'package:flutter/rendering.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 Widget makeFeed(BuildContext context, DocumentSnapshot post) {
   UserInfo _userInfo = UserInfo(null, null, null, null, null, null, null);
-  _getProfileData() async {
-    final uid = await Provider.of(context).auth.getCurrentUID();
+  _getProfileData(uid) async {
     await Provider.of(context)
         .db
         .collection('userData')
@@ -25,7 +25,7 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
   }
 
   return FutureBuilder(
-      future: _getProfileData(),
+      future: _getProfileData(post["uid"]),
       builder: (context1, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Container(
@@ -33,10 +33,6 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  height: 15,
-                  color: Colors.grey[200],
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -47,13 +43,24 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                           child: Container(
                             width: 50,
                             height: 50,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                      "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
+                            child: CachedNetworkImage(
+                                    imageUrl: _userInfo.userImage,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      width: 80.0,
+                                      height: 80.0,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
+                                      ),
                                     ),
-                                    fit: BoxFit.cover)),
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
                           ),
                         ),
                         SizedBox(
@@ -97,15 +104,13 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                 SizedBox(
                   height: 20,
                 ),
-                post["postImage"] != ''
-                    ? Container(
+                Container(
                         height: 300,
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: NetworkImage(post["postImage"]),
                                 fit: BoxFit.cover)),
-                      )
-                    : Container(),
+                      ),
                 SizedBox(
                   height: 20,
                 ),
@@ -143,7 +148,12 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                     makeLikeButton(isActive: false),
                     makeCommentButton(),
                   ],
-                )
+                ),
+                SizedBox(height: 20,),
+                Container(
+                  height: 15,
+                  color: Colors.grey[200],
+                ),
               ],
             ),
           );

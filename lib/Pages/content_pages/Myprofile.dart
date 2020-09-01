@@ -2,6 +2,7 @@ import 'package:SD/create_pages/update_profile_pic.dart';
 import 'package:flutter/material.dart';
 import 'package:SD/models/user_info.dart';
 import 'package:SD/widgets/provider_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MyProfile extends StatefulWidget {
   var pushedUrl;
@@ -16,284 +17,181 @@ class _MyProfileState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text("Profile", style: TextStyle(color:Colors.black),),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            padding: EdgeInsets.all(10.0),
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            color: Colors.blue[800],
+          ),
+        ],
+      ),
       body: FutureBuilder(
           future: _getProfileData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return ListView(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.redAccent, Colors.blue])),
-                          child: Container(
-                            width: double.infinity,
-                            height: 350.0,
-                            child: Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: CircleAvatar(
-                                          backgroundImage: widget.pushedUrl != null ?
-                                          NetworkImage(
-                                            widget.pushedUrl):
-                                          NetworkImage(
-                                            "${_userInfo.userImage}",
-                                          ),
-                                          radius: 50.0,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 60.0),
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.edit,
-                                            size: 30.0,
-                                          ),
-                                          onPressed: () {    
-                                            _awaitReturnValueFromSecondScreen(context);
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      "${_userInfo.userName}",
-                                      style: TextStyle(
-                                        fontSize: 22.0,
-                                        color: Colors.white,
+              return ListView(children: <Widget>[
+                Container(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.0),
+                        child: new Stack(
+                          fit: StackFit.loose,
+                          children: <Widget>[
+                            new Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                new Container(
+                                  width: 140.0,
+                                  height: 140.0,
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.pushedUrl == null
+                                        ? _userInfo.userImage
+                                        : widget.pushedUrl,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      width: 80.0,
+                                      height: 80.0,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
                                       ),
                                     ),
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  Card(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 5.0),
-                                    clipBehavior: Clip.antiAlias,
-                                    color: Colors.white,
-                                    elevation: 5.0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0, vertical: 22.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                Text(
-                                                  "Completed",
-                                                  style: TextStyle(
-                                                    color: Colors.redAccent,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5.0,
-                                                ),
-                                                Text(
-                                                  "${_userInfo.completed}",
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.pinkAccent,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                Text(
-                                                  "Followers",
-                                                  style: TextStyle(
-                                                    color: Colors.redAccent,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5.0,
-                                                ),
-                                                Text(
-                                                  "${_userInfo.numberFollowers}",
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.pinkAccent,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                Text(
-                                                  "Following",
-                                                  style: TextStyle(
-                                                    color: Colors.redAccent,
-                                                    fontSize: 22.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5.0,
-                                                ),
-                                                Text(
-                                                  "${_userInfo.numberFollowing}",
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Colors.pinkAccent,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          )),
-                      Container(
-                        child: Padding(
+                            Padding(
+                                padding:
+                                    EdgeInsets.only(top: 90.0, right: 100.0),
+                                child: new Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    InkWell(
+                                      customBorder: CircleBorder(),
+                                      onTap: () {
+                                        _awaitReturnValueFromSecondScreen(
+                                            context);
+                                      },
+                                      child: new CircleAvatar(
+                                        backgroundColor: Colors.blue[800],
+                                        radius: 25.0,
+                                        child: new Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top:20.0),
+                        child: Text(_userInfo.userName, style: TextStyle(fontWeight:FontWeight.bold, fontSize: 30),
+                      ),),
+                      Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 30.0, horizontal: 16.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                              horizontal: 8.0, vertical: 22.0),
+                          child: Row(
                             children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    width: 120.00,
-                                    child: RaisedButton(
-                                        onPressed: () {},
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(80.0)),
-                                        elevation: 0.0,
-                                        padding: EdgeInsets.all(0.0),
-                                        child: Ink(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.centerRight,
-                                                end: Alignment.centerLeft,
-                                                colors: [
-                                                  Colors.redAccent,
-                                                  Colors.pinkAccent
-                                                ]),
-                                            borderRadius:
-                                                BorderRadius.circular(30.0),
-                                          ),
-                                          child: Container(
-                                            constraints: BoxConstraints(
-                                                maxWidth: 300.0,
-                                                minHeight: 50.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              "Follow",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 19.0,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    width: 120.00,
-                                    child: RaisedButton(
-                                        onPressed: () {
-                                          _userEditBottomSheet(context);
-                                        },
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(80.0)),
-                                        elevation: 0.0,
-                                        padding: EdgeInsets.all(0.0),
-                                        child: Ink(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.centerRight,
-                                                end: Alignment.centerLeft,
-                                                colors: [
-                                                  Colors.redAccent,
-                                                  Colors.pinkAccent
-                                                ]),
-                                            borderRadius:
-                                                BorderRadius.circular(30.0),
-                                          ),
-                                          child: Container(
-                                            constraints: BoxConstraints(
-                                                maxWidth: 300.0,
-                                                minHeight: 50.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              "Update Profile",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 19.0,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "Completed",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      "${_userInfo.completed}",
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                              Text(
-                                "Bio:",
-                                style: TextStyle(
-                                    color: Colors.redAccent,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 28.0),
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "Followers",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      "${_userInfo.numberFollowers}",
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                              SizedBox(
-                                height: 10.0,
-                              ),
-                              Text(
-                                "${_userInfo.bio}",
-                                style: TextStyle(
-                                  fontSize: 22.0,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.black,
-                                  letterSpacing: 2.0,
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "Following",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      "${_userInfo.numberFollowing}",
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                      ),
+                          ))
                     ],
                   ),
-                ],
-              );
+                )
+              ]);
             } else {
               return Container();
-                  // child: Center(child: CircularProgressIndicator())
+              // child: Center(child: CircularProgressIndicator())
             }
           }),
     );
@@ -387,11 +285,14 @@ class _MyProfileState extends State<MyProfile> {
       },
     );
   }
+
   void _awaitReturnValueFromSecondScreen(BuildContext context) async {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => UpdateProfPic(userInfo: _userInfo,),
+          builder: (context) => UpdateProfPic(
+            userInfo: _userInfo,
+          ),
         ));
     setState(() {
       widget.pushedUrl = result;

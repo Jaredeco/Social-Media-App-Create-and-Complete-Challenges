@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:SD/Pages/content_pages/feed.dart';
+import 'package:SD/Pages/content_pages/challenge_feed.dart';
 import 'package:SD/Pages/content_pages/posts.dart';
-import 'package:SD/Pages/content_pages/Myprofile.dart';
-import 'package:SD/models/user_info.dart';
 
 class Home extends StatefulWidget {
   int page_index; 
@@ -14,7 +12,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final List<Widget> _tabItems = [Feed(), Posts(), MyProfile()];
+  final List<Widget> _tabItems = [Feed(), Posts()];
   GlobalKey _bottomNavigationKey = GlobalKey();
   int _activePage = 0;
   @override
@@ -24,9 +22,9 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
-        buttonBackgroundColor: Colors.blue,
-        color: Colors.blue,
-        backgroundColor: Colors.transparent,
+        color: Colors.white,
+        buttonBackgroundColor: Colors.grey[300],
+        backgroundColor: Colors.blue[800],
         animationDuration: Duration(milliseconds: 250),
         index: _activePage,
         animationCurve: Curves.bounceInOut,
@@ -35,7 +33,6 @@ class _HomeState extends State<Home> {
         items: <Widget>[
           Icon(Icons.explore, size: 25),
           Icon(Icons.bookmark, size: 25),
-          Icon(Icons.account_circle, size: 25),
         ],
         onTap: (index) {
           setState(() {

@@ -24,15 +24,16 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_auth: ^0.16.1
-  flutter_spinkit: ^4.1.2+1
+  # flutter_spinkit: ^4.1.2+1
   auto_size_text: ^2.1.0
   cloud_firestore: ^0.13.7
-  intl: ^0.16.1
+  # intl: ^0.16.1
   curved_navigation_bar: ^0.3.3
   firebase_storage: ^3.1.6
   image_picker: ^0.6.7+4
   flutter_auth_buttons: ^0.9.0
   google_sign_in: ^4.5.1
+  cached_network_image: ^2.3.1
  
 
 
@@ -58,6 +59,13 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/top_mount_per.jpg
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/font/OpenSans-Regular.ttf
+        - asset: assets/font/OpenSans-Bold.ttf
+        - asset: assets/font/OpenSans-Light.ttf
+          weight: 700
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

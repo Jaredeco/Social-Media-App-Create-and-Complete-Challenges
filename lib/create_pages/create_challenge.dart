@@ -47,12 +47,20 @@ class _CreateTaskState extends State<CreateTask> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+        automaticallyImplyLeading: false,
+        title: Text("Create a new challenge", style: TextStyle(color:Colors.black),),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            padding: EdgeInsets.all(10.0),
+            icon: Icon(Icons.close),
             onPressed: () {
-              Navigator.pop(context);
-            }),
-        title: Text('Create Challenge'),
+              Navigator.of(context).pop();
+            },
+            color: Colors.blue[800],
+          ),
+        ],
       ),
       body: ListView(children: <Widget>[
         Builder(
@@ -167,6 +175,7 @@ class _CreateTaskState extends State<CreateTask> {
                       color: Color(0xff476cfb),
                       onPressed: () async {
                         if (_image != null){
+                          final uid = await Provider.of(context).auth.getCurrentUID();
                           await uploadPic(context);
                           widget.challenge.taskName = _nameController.text;
                           widget.challenge.description =
@@ -175,8 +184,7 @@ class _CreateTaskState extends State<CreateTask> {
                           widget.challenge.numberDislikes = 0;
                           widget.challenge.numberLikes = 0;
                           widget.challenge.numberViews = 0;
-                          final uid =
-                              await Provider.of(context).auth.getCurrentUID();
+                          widget.challenge.uid = uid;
                           await db
                               .collection("userData")
                               .document(uid)

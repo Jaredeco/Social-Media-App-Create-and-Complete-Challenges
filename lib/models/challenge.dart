@@ -6,6 +6,7 @@ class Challenge {
     int numberViews;
     int numberLikes; 
     int  numberDislikes;
+    String uid;
 
   Challenge(
       this.imageVal,
@@ -14,6 +15,7 @@ class Challenge {
       this.numberViews,
       this.numberLikes,
       this.numberDislikes,
+      this.uid,
       );
 
   Map<String, dynamic> toJson() => {
@@ -23,5 +25,6 @@ class Challenge {
     'numberViews':numberViews,
     'numberLikes':numberLikes,
     'numberDislikes':numberDislikes,
+    'uid':uid,
   };
 }

@@ -47,12 +47,23 @@ class _CreatePostState extends State<CreatePost> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+        automaticallyImplyLeading: false,
+        title: Text(
+          "Create a new post",
+          style: TextStyle(color: Colors.black),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            padding: EdgeInsets.all(10.0),
+            icon: Icon(Icons.close),
             onPressed: () {
-              Navigator.pop(context);
-            }),
-        title: Text('Create Post'),
+              Navigator.of(context).pop();
+            },
+            color: Colors.blue[800],
+          ),
+        ],
       ),
       body: ListView(children: <Widget>[
         Builder(
@@ -168,7 +179,8 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () async {
                         if (_image != null) {
                           await uploadPic(context);
-                          final uid = await Provider.of(context).auth.getCurrentUID();
+                          final uid =
+                              await Provider.of(context).auth.getCurrentUID();
                           widget.post.uid = uid.toString();
                           widget.post.postText = _descriptionController.text;
                           widget.post.postImage = imageUrl;
@@ -179,12 +191,12 @@ class _CreatePostState extends State<CreatePost> {
                               .document(uid)
                               .collection("posts")
                               .add(widget.post.toJson());
-                          Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => Home(page_index: 1)));
-                        }else{
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text("Please, upload the picture!"),)
-                          );
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => Home(page_index: 1)));
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text("Please, upload the picture!"),
+                          ));
                         }
                       },
                       elevation: 4.0,
