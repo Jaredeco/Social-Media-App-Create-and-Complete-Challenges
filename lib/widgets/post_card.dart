@@ -1,3 +1,4 @@
+import 'package:SD/Pages/content_pages/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/models/user_info.dart';
@@ -6,8 +7,9 @@ import 'package:flutter/rendering.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 Widget makeFeed(BuildContext context, DocumentSnapshot post) {
-  UserInfo _userInfo = UserInfo(null, null, null, null, null, null, null);
-  _getProfileData(uid) async {
+  UserInfo _userInfo =
+      UserInfo(null, null, null, null, null, null, null, null, null);
+  _getProfileData(uid) async{
     await Provider.of(context)
         .db
         .collection('userData')
@@ -28,134 +30,106 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
       future: _getProfileData(post["uid"]),
       builder: (context1, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 13, top: 8),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            child: CachedNetworkImage(
-                                    imageUrl: _userInfo.userImage,
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover),
-                                      ),
-                                    ),
-                                    placeholder: (context, url) =>
-                                        CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          _userInfo.userName,
-                          style: TextStyle(
-                              color: Colors.grey[900],
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 3,
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.more_horiz,
-                        size: 30,
-                        color: Colors.grey[600],
-                      ),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                height: 300,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(post["postImage"]),
+                        fit: BoxFit.cover)),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                child: Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    post["postText"],
+                    "Challenge",
                     style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.grey[800],
-                    ),
+                        color: Colors.blue[800],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                        height: 300,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(post["postImage"]),
-                                fit: BoxFit.cover)),
-                      ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 20),
+                child: Row(
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        makeLike(),
-                        SizedBox(
-                          width: 5,
+                    Container(
+                      width: 50,
+                      height: 50,
+                      child: InkWell(
+                        customBorder: CircleBorder(),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  UserProfile(postUID: post["uid"])));
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: _userInfo.userImage,
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: 80.0,
+                            height: 80.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.cover),
+                            ),
+                          ),
+                          placeholder: (context, url) => Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              border: Border.all(color: Colors.grey[400]),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
-                        Text(
-                          post["numberLikes"].toString(),
-                          style:
-                              TextStyle(fontSize: 15, color: Colors.grey[800]),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Text(
-                        post["numberComments"].toString() + " Comments",
-                        style: TextStyle(fontSize: 15, color: Colors.grey[800]),
                       ),
-                    )
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Text(
+                      _userInfo.userName,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        post["postText"],
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    makeLikeButton(isActive: false),
-                    makeCommentButton(),
-                  ],
-                ),
-                SizedBox(height: 20,),
-                Container(
-                  height: 15,
-                  color: Colors.grey[200],
-                ),
-              ],
-            ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  rowItem(Icons.arrow_upward, post["numberLikes"].toString()),
+                  rowItem(Icons.comment, post["numberComments"].toString()),
+                ],
+              ),
+              Container(
+                height: 15,
+                color: Colors.grey[200],
+              ),
+            ],
           );
         } else {
           return Container();
@@ -163,73 +137,18 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
       });
 }
 
-Widget makeLike() {
+Widget rowItem(IconData dataIcon, String data) {
   return Padding(
-    padding: const EdgeInsets.only(left: 8),
-    child: Container(
-      width: 25,
-      height: 25,
-      decoration: BoxDecoration(
-          color: Colors.blue,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white)),
-      child: Center(
-        child: Icon(Icons.thumb_up, size: 12, color: Colors.white),
-      ),
-    ),
-  );
-}
-
-Widget makeLikeButton({isActive}) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey[200]),
-      borderRadius: BorderRadius.circular(50),
-    ),
-    child: Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            Icons.thumb_up,
-            color: isActive ? Colors.blue : Colors.grey,
-            size: 18,
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            "Like",
-            style: TextStyle(color: isActive ? Colors.blue : Colors.grey),
-          )
-        ],
-      ),
-    ),
-  );
-}
-
-Widget makeCommentButton() {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey[200]),
-      borderRadius: BorderRadius.circular(50),
-    ),
-    child: Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(Icons.chat, color: Colors.grey, size: 18),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            "Comment",
-            style: TextStyle(color: Colors.grey),
-          )
-        ],
-      ),
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      children: [
+        Icon(
+          dataIcon,
+          color: Colors.blue[800],
+        ),
+        SizedBox(width: 5),
+        Text(data),
+      ],
     ),
   );
 }

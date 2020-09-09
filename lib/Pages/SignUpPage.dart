@@ -288,7 +288,9 @@ class _SignUpViewState extends State<SignUpView> {
               0,
               0,
               0,
-              uid.toString());
+              uid.toString(),
+              [],
+              []);
           if (snapShot == null || !snapShot.exists) {
             await Provider.of(context)
                 .db
@@ -349,7 +351,9 @@ class _SignUpViewState extends State<SignUpView> {
                     0,
                     0,
                     0,
-                    _uid);
+                    _uid,
+                    [],
+                    []);
                 if (snapShot == null || !snapShot.exists) {
                   await Provider.of(context)
                       .db

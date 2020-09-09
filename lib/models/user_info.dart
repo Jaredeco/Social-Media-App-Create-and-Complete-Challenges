@@ -6,8 +6,8 @@ class UserInfo {
     int numberFollowing;
     int completed;
     String uid;
-    // List<String> followers;
-    // List<String> following;
+    List<String> followers;
+    List<String> following;
   UserInfo(
       this.userImage,
       this.userName,
@@ -16,6 +16,8 @@ class UserInfo {
       this.numberFollowing,
       this.completed,
       this.uid,
+      this.followers,
+      this.following,
       );
 
   Map<String, dynamic> toJson() => {
@@ -26,5 +28,7 @@ class UserInfo {
     'numberFollowing':numberFollowing,
     'completed':completed,
     'uid':uid,
+    'followers':followers,
+    'following':following,
   };
 }

@@ -6,6 +6,7 @@ import 'package:SD/widgets/provider_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:SD/models/challenge.dart';
 import 'Myprofile.dart';
+
 class Feed extends StatefulWidget {
   Feed({Key key}) : super(key: key);
 
@@ -16,11 +17,15 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
-    final newChallenge = new Challenge(null, null, null, null, null, null, null);
+    final newChallenge =
+        new Challenge(null, null, null, null, null, null, null);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-          child: Icon(Icons.add, color: Colors.blue[800],),
+          backgroundColor: Colors.white,
+          child: Icon(
+            Icons.add,
+            color: Colors.blue[800],
+          ),
           onPressed: () {
             return Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CreateTask(challenge: newChallenge)));
@@ -33,19 +38,28 @@ class _FeedState extends State<Feed> {
             customBorder: CircleBorder(),
             splashColor: Colors.black,
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>MyProfile()));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => MyProfile()));
             },
             child: CachedNetworkImage(
-              imageUrl: "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+              imageUrl:
+                  "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
               imageBuilder: (context, imageProvider) => Container(
                 width: 80.0,
                 height: 80.0,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                  image:
+                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
                 ),
               ),
-              placeholder: (context, url) => CircularProgressIndicator(),
+              placeholder: (context, url) => Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  border: Border.all(color: Colors.grey[400]),
+                  shape: BoxShape.circle,
+                ),
+              ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
@@ -66,7 +80,7 @@ class _FeedState extends State<Feed> {
       ),
       body: Container(
         child: StreamBuilder(
-            stream: getUsersTripsStreamSnapshots(context),
+            stream: loadChallenges(context),
             builder: (context, snapshot) {
               if (!snapshot.hasData)
                 return Container(
@@ -87,7 +101,7 @@ class _FeedState extends State<Feed> {
     );
   }
 
-  Stream<QuerySnapshot> getUsersTripsStreamSnapshots(
+  Stream<QuerySnapshot> loadChallenges(
       BuildContext context) async* {
     final uid = await Provider.of(context).auth.getCurrentUID();
     yield* Firestore.instance

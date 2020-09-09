@@ -26,7 +26,8 @@ class _PostsState extends State<Posts> {
           child: InkWell(
             customBorder: CircleBorder(),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>MyProfile()));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => MyProfile()));
             },
             child: CachedNetworkImage(
               imageUrl:
@@ -40,7 +41,13 @@ class _PostsState extends State<Posts> {
                       DecorationImage(image: imageProvider, fit: BoxFit.cover),
                 ),
               ),
-              placeholder: (context, url) => CircularProgressIndicator(),
+              placeholder: (context, url) => Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  border: Border.all(color: Colors.grey[400]),
+                  shape: BoxShape.circle,
+                ),
+              ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
@@ -60,8 +67,11 @@ class _PostsState extends State<Posts> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-          child: Icon(Icons.add, color: Colors.blue[800],),
+          backgroundColor: Colors.white,
+          child: Icon(
+            Icons.add,
+            color: Colors.blue[800],
+          ),
           onPressed: () {
             return Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CreatePost(post: newPost)));
@@ -70,7 +80,7 @@ class _PostsState extends State<Posts> {
         children: <Widget>[
           Container(
             child: StreamBuilder(
-                stream: getUsersTripsStreamSnapshots(context),
+                stream: loadPosts(context),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData)
                     return Container(
@@ -96,7 +106,7 @@ class _PostsState extends State<Posts> {
     );
   }
 
-  Stream<QuerySnapshot> getUsersTripsStreamSnapshots(
+  Stream<QuerySnapshot> loadPosts(
       BuildContext context) async* {
     final uid = await Provider.of(context).auth.getCurrentUID();
     yield* Firestore.instance

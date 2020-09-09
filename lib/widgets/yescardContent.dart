@@ -1,3 +1,4 @@
+import 'package:SD/Pages/content_pages/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -25,7 +26,8 @@ Widget myCard(
     int numberLikes,
     int numberDislikes,
     String uid) {
-  UserInfo _userInfo = UserInfo(null, null, null, null, null, null, null);
+  UserInfo _userInfo =
+      UserInfo(null, null, null, null, null, null, null, null, null);
   _getProfileData(uid) async {
     await Provider.of(context)
         .db
@@ -51,7 +53,7 @@ Widget myCard(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                height: 200,
+                height: 250,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(imageVal), fit: BoxFit.cover)),
@@ -67,39 +69,40 @@ Widget myCard(
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Category",
-                    style: TextStyle(
-                        color: Colors.blue[800],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ),
-              Padding(
                 padding: const EdgeInsets.only(left: 20, top: 20),
                 child: Row(
                   children: <Widget>[
                     Container(
                       width: 50,
                       height: 50,
-                      child: CachedNetworkImage(
-                        imageUrl: _userInfo.userImage,
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: 80.0,
-                          height: 80.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: imageProvider, fit: BoxFit.cover),
+                      child: InkWell(
+                        customBorder: CircleBorder(),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  UserProfile(postUID: _userInfo.uid)));
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: _userInfo.userImage,
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: 80.0,
+                            height: 80.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.cover),
+                            ),
                           ),
+                          placeholder: (context, url) => Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              border: Border.all(color: Colors.grey[400]),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
-                        placeholder: (context, url) =>
-                            CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
                     SizedBox(
@@ -152,8 +155,8 @@ Widget myCard(
                     onPressed: () {},
                     color: Colors.white,
                     textColor: Colors.blue[800],
-                    child:
-                        Text("Yes".toUpperCase(), style: TextStyle(fontSize: 20)),
+                    child: Text("Yes".toUpperCase(),
+                        style: TextStyle(fontSize: 20)),
                   ),
                 ),
               ),
