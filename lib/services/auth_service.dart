@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -12,6 +13,17 @@ class AuthService {
   // GET UID
   Future<String> getCurrentUID() async {
     return (await _firebaseAuth.currentUser()).uid;
+  }
+
+  //Get user Image
+  Future<String> getUserImage() async{
+    final uid = (await _firebaseAuth.currentUser()).uid;
+    String _userImage;
+    await Firestore.instance.collection('userData')
+        .document(uid).get().then((result){
+          _userImage = result.data["userImage"];
+        });
+    return _userImage;
   }
   //Get current user
   Future getCurrentUser() async{

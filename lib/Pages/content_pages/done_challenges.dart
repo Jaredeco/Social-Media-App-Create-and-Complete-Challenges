@@ -8,14 +8,14 @@ import 'package:SD/models/challenge.dart';
 import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'Myprofile.dart';
 
-class Feed extends StatefulWidget {
-  Feed({Key key}) : super(key: key);
+class DoneChallenges extends StatefulWidget {
+  DoneChallenges({Key key}) : super(key: key);
 
   @override
-  _FeedState createState() => _FeedState();
+  _DoneChallengesState createState() => _DoneChallengesState();
 }
 
-class _FeedState extends State<Feed> {
+class _DoneChallengesState extends State<DoneChallenges> {
   bool _isSearching = false;
   final _appbarController = ScrollController(); 
   @override
@@ -23,16 +23,6 @@ class _FeedState extends State<Feed> {
     final newChallenge =
         new Challenge(null, null, null, null, null, null, null, null, null);
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.white,
-          child: Icon(
-            Icons.add,
-            color: Colors.blue[800],
-          ),
-          onPressed: () {
-            return Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CreateTask(challenge: newChallenge)));
-          }),
       appBar: ScrollAppBar(
         controller: _appbarController,
         backgroundColor: Colors.white,

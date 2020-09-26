@@ -42,25 +42,24 @@ class _CreateTaskState extends State<CreateTask> {
       setState(() {
         imageUrl = _url;
       });
-
     }
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Create a new challenge", style: TextStyle(color:Colors.black),),
+        title: Text(
+          "Create a new challenge",
+          style: TextStyle(color: Colors.blue[800]),
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-            padding: EdgeInsets.all(10.0),
-            icon: Icon(Icons.close),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            color: Colors.blue[800],
-          ),
-        ],
+        leading: IconButton(
+          padding: EdgeInsets.all(10.0),
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.blue[800],
+        ),
       ),
       body: ListView(children: <Widget>[
         Builder(
@@ -68,146 +67,132 @@ class _CreateTaskState extends State<CreateTask> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  height: 20.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                        radius: 100,
-                        backgroundColor: Color(0xff476cfb),
-                        child: ClipOval(
-                          child: new SizedBox(
-                            width: 180.0,
-                            height: 180.0,
-                            child: (_image != null)
-                                ? Image.file(
-                                    _image,
-                                    fit: BoxFit.fill,
-                                  )
-                                : Image.network(
-                                    "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
-                                    fit: BoxFit.fill,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 60.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.camera_alt,
-                          size: 30.0,
-                        ),
-                        onPressed: () {
-                          getImage();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                Stack(
+                  alignment: Alignment.bottomLeft,
+                  children: [
                     Container(
-                      width: 320,
-                      child: TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
-                            borderRadius: const BorderRadius.all(
-                              const Radius.circular(10.0),
-                            ),
-                          ),
-                          labelText: 'Name',
+                      height: MediaQuery.of(context).size.height * 0.40,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: (_image != null)
+                              ? FileImage(
+                                  _image,
+                                )
+                              : AssetImage(
+                                  "assets/empty_image.png",
+                                ),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Container(
-                        width: 320,
-                        child: TextField(
-                          controller: _descriptionController,
-                          maxLines: 8,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(  
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
-                              borderRadius: const BorderRadius.all(
-                                const Radius.circular(10.0),
-                              ),
-                            ),
-                            labelText: 'Description',
-                          ),
-                        ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        size: 30.0,
                       ),
+                      onPressed: () {
+                        getImage();
+                      },
                     ),
                   ],
                 ),
                 SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                            const Radius.circular(10.0),
+                          ),
+                          borderSide: BorderSide(color: Colors.blue[800])),
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          const Radius.circular(10.0),
+                        ),
+                      ),
+                      labelStyle: TextStyle(color: Colors.blue[800]),
+                      labelText: 'Title',
+                    ),
+                  ),
+                ),
+                SizedBox(
                   height: 20.0,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Color(0xff476cfb),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      elevation: 4.0,
-                      splashColor: Colors.blueGrey,
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  child: TextField(
+                    controller: _descriptionController,
+                    maxLines: 8,
+                    keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                            const Radius.circular(10.0),
+                          ),
+                          borderSide: BorderSide(color: Colors.blue[800])),
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          const Radius.circular(10.0),
+                        ),
                       ),
+                      labelStyle: TextStyle(color: Colors.blue[800]),
+                      labelText: 'Description',
                     ),
-                    RaisedButton(
-                      color: Color(0xff476cfb),
-                      onPressed: () async {
-                        if (_image != null){
-                          final uid = await Provider.of(context).auth.getCurrentUID();
-                          await uploadPic(context);
-                          widget.challenge.taskName = _nameController.text;
-                          widget.challenge.description =
-                              _descriptionController.text;
-                          widget.challenge.imageVal = imageUrl;
-                          widget.challenge.numberDislikes = 0;
-                          widget.challenge.numberLikes = 0;
-                          widget.challenge.numberViews = 0;
-                          widget.challenge.uid = uid;
-                          await db
-                              .collection("userData")
-                              .document(uid)
-                              .collection("challenges")
-                              .add(widget.challenge.toJson());
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Home(
-                                    page_index: 0,
-                                  )));
-                        } else {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text("Please, upload the picture!"),
-                          ));
-                        }
-                      },
-                      elevation: 4.0,
-                      splashColor: Colors.blueGrey,
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white, fontSize: 16.0),
-                      ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                ButtonTheme(
+                  minWidth: 120,
+                  height: 50,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  ],
+                    color: Colors.white,
+                    onPressed: () async {
+                      if (_image != null) {
+                        final uid =
+                            await Provider.of(context).auth.getCurrentUID();
+                        await uploadPic(context);
+                        widget.challenge.taskName = _nameController.text;
+                        widget.challenge.description =
+                            _descriptionController.text;
+                        widget.challenge.imageVal = imageUrl;
+                        widget.challenge.likedBy = [];
+                        widget.challenge.dislikedBy = [];
+                        widget.challenge.completedBy = [];
+                        widget.challenge.comments = [];
+                        widget.challenge.uid = uid;
+                        widget.challenge.timeCreated = Timestamp.now();
+                        await db
+                            .collection("challenges")
+                            .add(widget.challenge.toJson());
+                        Navigator.pop(context);
+                      } else {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("Please, upload the picture!"),
+                        ));
+                      }
+                    },
+                    elevation: 4.0,
+                    splashColor: Colors.blue[800],
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(
+                          color: Colors.blue[800],
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 35,
                 )
               ],
             ),

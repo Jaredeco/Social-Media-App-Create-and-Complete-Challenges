@@ -282,15 +282,10 @@ class _SignUpViewState extends State<SignUpView> {
               .document(uid)
               .get();
           UserInfo _userInfo = UserInfo(
-              "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/junior-ferreira-7esRPTt38nI-unsplash.jpg?alt=media&token=248c2d71-71cf-4683-ab01-484dae2c3028",
+              "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/048becc703e80184d103b643f7024519.jpg?alt=media&token=4e02178b-d69f-4617-b497-47206ae8ba35",
               _name,
               "",
-              0,
-              0,
-              0,
-              uid.toString(),
-              [],
-              []);
+              uid.toString(), [], [], [], []);
           if (snapShot == null || !snapShot.exists) {
             await Provider.of(context)
                 .db
@@ -345,15 +340,10 @@ class _SignUpViewState extends State<SignUpView> {
                     .document(_uid)
                     .get();
                 UserInfo _userInfo = UserInfo(
-                    "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/junior-ferreira-7esRPTt38nI-unsplash.jpg?alt=media&token=248c2d71-71cf-4683-ab01-484dae2c3028",
+                    "https://firebasestorage.googleapis.com/v0/b/seekdis-6115e.appspot.com/o/048becc703e80184d103b643f7024519.jpg?alt=media&token=4e02178b-d69f-4617-b497-47206ae8ba35",
                     _name,
                     "",
-                    0,
-                    0,
-                    0,
-                    _uid,
-                    [],
-                    []);
+                    _uid, [], [], [], []);
                 if (snapShot == null || !snapShot.exists) {
                   await Provider.of(context)
                       .db

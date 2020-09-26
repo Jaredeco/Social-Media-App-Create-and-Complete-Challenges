@@ -8,7 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 Widget makeFeed(BuildContext context, DocumentSnapshot post) {
   UserInfo _userInfo =
-      UserInfo(null, null, null, null, null, null, null, null, null);
+      UserInfo(null, null, null, null, null, null, null, null);
   _getProfileData(uid) async{
     await Provider.of(context)
         .db
@@ -20,9 +20,10 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
       _userInfo.userImage = result.data['userImage'];
       _userInfo.bio = result.data['bio'];
       _userInfo.uid = result.data['uid'];
-      _userInfo.numberFollowers = result.data['numberFollowers'];
-      _userInfo.numberFollowing = result.data['numberFollowing'];
       _userInfo.completed = result.data['completed'];
+      _userInfo.inProgress = result.data['inProgress'];
+      _userInfo.followers = result.data['followers'];
+      _userInfo.following = result.data['following'];
     });
   }
 
@@ -34,7 +35,7 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                height: 300,
+                height: 270,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(post["postImage"]),
@@ -125,10 +126,7 @@ Widget makeFeed(BuildContext context, DocumentSnapshot post) {
                   rowItem(Icons.comment, post["numberComments"].toString()),
                 ],
               ),
-              Container(
-                height: 15,
-                color: Colors.grey[200],
-              ),
+              SizedBox(height: 10,),
             ],
           );
         } else {

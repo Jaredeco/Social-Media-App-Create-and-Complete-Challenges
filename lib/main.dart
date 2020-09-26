@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
           title: 'SD',
           theme: ThemeData(
             primarySwatch: createMaterialColor(Color(0xFF1565C0)),
-            visualDensity: VisualDensity.adaptivePlatformDensity,
             fontFamily: 'OpenSans'
           ),
           home: HomeController(),

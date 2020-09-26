@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/yescardContent.dart';
 import 'package:SD/widgets/post_card.dart';
+import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class MyProfile extends StatefulWidget {
   var pushedUrl;
@@ -15,29 +16,39 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
-  UserInfo _userInfo = UserInfo("", "", "", 0, 0, 0, "", [], []);
+  final _appbarController = ScrollController();
+  UserInfo _userInfo = UserInfo("", "", "", "", [], [], [], []);
   TextEditingController _userBioController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
+      appBar: ScrollAppBar(
+        controller: _appbarController,
         title: Text(
           "Profile",
           style: TextStyle(color: Colors.blue[800]),
         ),
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.blue[800],
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Colors.white,
         actions: [
           IconButton(
             padding: EdgeInsets.all(10.0),
-            icon: Icon(Icons.close),
+            icon: Icon(Icons.exit_to_app),
             onPressed: () {
-              Navigator.of(context).pop();
+              Provider.of(context).auth.signOut();
             },
-            color: Colors.blue[800],
+            color: Colors.red,
           ),
         ],
       ),
@@ -45,184 +56,197 @@ class _MyProfileState extends State<MyProfile> {
           future: _getProfileData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return SingleChildScrollView(
-                child: Column(children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: Stack(
-                      fit: StackFit.loose,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: 140.0,
-                              height: 140.0,
-                              child: CachedNetworkImage(
-                                imageUrl: widget.pushedUrl == null
-                                    ? _userInfo.userImage
-                                    : widget.pushedUrl,
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
-                                  width: 80.0,
-                                  height: 80.0,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover),
-                                  ),
-                                ),
-                                placeholder: (context, url) =>
-                                    CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                InkWell(
-                                  customBorder: CircleBorder(),
-                                  onTap: () {
-                                    _awaitReturnValueFromSecondScreen(context);
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.blue[800],
-                                    radius: 25.0,
-                                    child: Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.white,
+              return Snap(
+                controller: _appbarController.appBar,
+                child: SingleChildScrollView(
+                  controller: _appbarController,
+                  child: Column(children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.0),
+                      child: Stack(
+                        fit: StackFit.loose,
+                        children: <Widget>[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: 140.0,
+                                height: 140.0,
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.pushedUrl == null
+                                      ? _userInfo.userImage
+                                      : widget.pushedUrl,
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    width: 80.0,
+                                    height: 80.0,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover),
                                     ),
                                   ),
-                                )
-                              ],
-                            )),
-                      ],
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(top: 90.0, right: 100.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  InkWell(
+                                    customBorder: CircleBorder(),
+                                    onTap: () {
+                                      _awaitReturnValueFromSecondScreen(
+                                          context);
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.blue[800],
+                                      radius: 25.0,
+                                      child: Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: Text(
-                      _userInfo.userName,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        _userInfo.userName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30),
+                      ),
                     ),
-                  ),
-                  Wrap(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 11, top: 15),
-                        child: InkWell(
-                          customBorder: CircleBorder(),
-                          onTap: () => _userEditBottomSheet(context),
-                          child: Icon(
+                    Wrap(
+                      children: [
+                        FlatButton.icon(
+                          padding: EdgeInsets.only(left: 8),
+                          onPressed: () {
+                            _userEditBottomSheet(context);
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0))),
+                          label: Text(
+                            'Edit Bio',
+                            style: TextStyle(
+                                color: Colors.blue[800], fontSize: 17),
+                          ),
+                          icon: Icon(
                             Icons.edit,
                             color: Colors.blue[800],
                           ),
+                          color: Colors.white,
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 12, right: 12, top: 10),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              _userInfo.bio,
-                              style: TextStyle(fontSize: 20),
-                            )),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 19.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Completed",
-                                  style: TextStyle(
-                                    color: Colors.blue[800],
-                                    fontSize: 22.0,
-                                    fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: EdgeInsets.only(left: 12, right: 12),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                _userInfo.bio,
+                                style: TextStyle(fontSize: 20),
+                              )),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 19.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Completed",
+                                    style: TextStyle(
+                                      color: Colors.blue[800],
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  "${_userInfo.completed}",
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.black,
+                                  SizedBox(
+                                    height: 5.0,
                                   ),
-                                )
-                              ],
+                                  Text(
+                                    "${_userInfo.completed.length}",
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Followers",
-                                  style: TextStyle(
-                                    color: Colors.blue[800],
-                                    fontSize: 22.0,
-                                    fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Followers",
+                                    style: TextStyle(
+                                      color: Colors.blue[800],
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  "${_userInfo.numberFollowers}",
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.black,
+                                  SizedBox(
+                                    height: 5.0,
                                   ),
-                                )
-                              ],
+                                  Text(
+                                    "${_userInfo.followers.length}",
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Following",
-                                  style: TextStyle(
-                                    color: Colors.blue[800],
-                                    fontSize: 22.0,
-                                    fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Following",
+                                    style: TextStyle(
+                                      color: Colors.blue[800],
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  _userInfo.numberFollowing.toString(),
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.black,
+                                  SizedBox(
+                                    height: 5.0,
                                   ),
-                                )
-                              ],
+                                  Text(
+                                    "${_userInfo.following.length}",
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      )),
-                  Divider(
-                    color: Colors.blue[800],
-                    height: 0,
-                  ),
-                  BottomProfileFeed(),
-                ]),
+                          ],
+                        )),
+                    Divider(
+                      color: Colors.blue[800],
+                      height: 0,
+                    ),
+                    BottomProfileFeed(),
+                  ]),
+                ),
               );
             } else {
               return Container();
@@ -243,9 +267,10 @@ class _MyProfileState extends State<MyProfile> {
       _userInfo.userImage = result.data['userImage'];
       _userInfo.bio = result.data['bio'];
       _userInfo.uid = result.data['uid'];
-      _userInfo.numberFollowers = result.data['numberFollowers'];
-      _userInfo.numberFollowing = result.data['numberFollowing'];
       _userInfo.completed = result.data['completed'];
+      _userInfo.inProgress = result.data['inProgress'];
+      _userInfo.followers = result.data['followers'];
+      _userInfo.following = result.data['following'];
     });
   }
 
@@ -438,20 +463,18 @@ class _BottomProfileFeedState extends State<BottomProfileFeed> {
   }
 
   Stream<QuerySnapshot> loadChalleges(BuildContext context) async* {
-    final uid = await Provider.of(context).auth.getCurrentUID();
+    final _uid = await Provider.of(context).auth.getCurrentUID();
     yield* Firestore.instance
-        .collection('userData')
-        .document(uid)
         .collection('challenges')
+        .where("uid", isEqualTo: _uid)
         .snapshots();
   }
 
   Stream<QuerySnapshot> loadPosts(BuildContext context) async* {
-    final uid = await Provider.of(context).auth.getCurrentUID();
+    final _uid = await Provider.of(context).auth.getCurrentUID();
     yield* Firestore.instance
-        .collection('userData')
-        .document(uid)
         .collection('posts')
+        .where("uid", isEqualTo: _uid)
         .snapshots();
   }
 }

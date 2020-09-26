@@ -20,7 +20,6 @@ class _CreatePostState extends State<CreatePost> {
   final db = Firestore.instance;
   File _image;
   var imageUrl;
-  TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
 
   @override
@@ -50,20 +49,18 @@ class _CreatePostState extends State<CreatePost> {
         automaticallyImplyLeading: false,
         title: Text(
           "Create a new post",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.blue[800]),
         ),
         elevation: 0,
         backgroundColor: Colors.white,
-        actions: [
-          IconButton(
+        leading: IconButton(
             padding: EdgeInsets.all(10.0),
-            icon: Icon(Icons.close),
+            icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
             color: Colors.blue[800],
           ),
-        ],
       ),
       body: ListView(children: <Widget>[
         Builder(
@@ -71,142 +68,105 @@ class _CreatePostState extends State<CreatePost> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  height: 20.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                        radius: 100,
-                        backgroundColor: Color(0xff476cfb),
-                        child: ClipOval(
-                          child: new SizedBox(
-                            width: 180.0,
-                            height: 180.0,
-                            child: (_image != null)
-                                ? Image.file(
-                                    _image,
-                                    fit: BoxFit.fill,
-                                  )
-                                : Image.network(
-                                    "https://www.levelupsneakers.com/public/themes/default/backend/images/default-img.png",
-                                    fit: BoxFit.fill,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 60.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.camera_alt,
-                          size: 30.0,
-                        ),
-                        onPressed: () {
-                          getImage();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                Stack(
+                  alignment: Alignment.bottomLeft,
+                  children: [
                     Container(
-                      width: 320,
-                      child: TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
-                            borderRadius: const BorderRadius.all(
-                              const Radius.circular(10.0),
-                            ),
-                          ),
-                          labelText: 'Name',
+                      height: MediaQuery.of(context).size.height * 0.40,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: (_image != null)
+                              ? FileImage(
+                                  _image,
+                                )
+                              : AssetImage(
+                                  "assets/empty_image.png",
+                                ),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Container(
-                        width: 320,
-                        child: TextField(
-                          controller: _descriptionController,
-                          maxLines: 8,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
-                              borderRadius: const BorderRadius.all(
-                                const Radius.circular(10.0),
-                              ),
-                            ),
-                            labelText: 'Description',
-                          ),
-                        ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        size: 30.0,
                       ),
+                      onPressed: () {
+                        getImage();
+                      },
                     ),
                   ],
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Color(0xff476cfb),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      elevation: 4.0,
-                      splashColor: Colors.blueGrey,
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  child: TextField(
+                    controller: _descriptionController,
+                    maxLines: 8,
+                    keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          const Radius.circular(10.0),
+                        ),
+                          borderSide: BorderSide(color: Colors.blue[800])),
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          const Radius.circular(10.0),
+                        ),
                       ),
+                      labelStyle: TextStyle(color:Colors.blue[800]),
+                      labelText: 'Description',
                     ),
-                    RaisedButton(
-                      color: Color(0xff476cfb),
-                      onPressed: () async {
-                        if (_image != null) {
-                          await uploadPic(context);
-                          final uid =
-                              await Provider.of(context).auth.getCurrentUID();
-                          widget.post.uid = uid.toString();
-                          widget.post.postText = _descriptionController.text;
-                          widget.post.postImage = imageUrl;
-                          widget.post.numberLikes = 0;
-                          widget.post.numberComments = 0;
-                          await db
-                              .collection("userData")
-                              .document(uid)
-                              .collection("posts")
-                              .add(widget.post.toJson());
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Home(page_index: 1)));
-                        } else {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text("Please, upload the picture!"),
-                          ));
-                        }
-                      },
-                      elevation: 4.0,
-                      splashColor: Colors.blueGrey,
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white, fontSize: 16.0),
-                      ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                ButtonTheme(
+                  minWidth: 120,
+                  height: 50,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  ],
+                    color: Colors.white,
+                    onPressed: () async {
+                      if (_image != null) {
+                        await uploadPic(context);
+                        final uid =
+                            await Provider.of(context).auth.getCurrentUID();
+                        widget.post.uid = uid.toString();
+                        widget.post.postText = _descriptionController.text;
+                        widget.post.postImage = imageUrl;
+                        widget.post.numberLikes = 0;
+                        widget.post.numberComments = 0;
+                        widget.post.timeCreated = Timestamp.now();
+                        await db
+                            .collection("posts")
+                            .add(widget.post.toJson());
+                        Navigator.pop(context);
+                      } else {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("Please, upload the picture!"),
+                        ));
+                      }
+                    },
+                    elevation: 4.0,
+                    splashColor: Colors.blue[800],
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(
+                          color: Colors.blue[800],
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 35,
                 )
               ],
             ),

@@ -1,3 +1,4 @@
+import 'package:SD/Pages/content_pages/done_challenges.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:SD/Pages/content_pages/challenge_feed.dart';
@@ -22,7 +23,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget build(BuildContext context) {
-    final List<Widget> _tabItems = [Feed(), Posts()];
+    final List<Widget> _tabItems = [Feed(), Posts(), DoneChallenges()];
     return Scaffold(
         bottomNavigationBar: CurvedNavigationBar(
           color: Colors.white,
@@ -36,11 +37,13 @@ class _HomeState extends State<Home> {
           items: <Widget>[
             Icon(Icons.explore, size: 25),
             Icon(Icons.bookmark, size: 25),
+            Icon(Icons.done, size: 25),
           ],
           onTap: (index) {
-            setState(() {
-              _activePage = index;
-            });
+            if (index != _activePage){
+              setState(() {
+                _activePage = index;
+              });}
           },
         ),
         body: _tabItems[_activePage]);

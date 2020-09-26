@@ -1,4 +1,3 @@
-import 'package:SD/create_pages/update_profile_pic.dart';
 import 'package:flutter/material.dart';
 import 'package:SD/models/user_info.dart';
 import 'package:SD/widgets/provider_widget.dart';
@@ -6,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/yescardContent.dart';
 import 'package:SD/widgets/post_card.dart';
+import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class UserProfile extends StatefulWidget {
   var postUID;
@@ -15,13 +15,15 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  UserInfo _userInfo = UserInfo("", "", "", 0, 0, 0, "", [], []);
+  final _appbarController = ScrollController();
+  UserInfo _userInfo = UserInfo("", "", "", "", [], [], [], []);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar: ScrollAppBar(
+        controller: _appbarController,
         automaticallyImplyLeading: false,
         title: Text(
           "Profile",
@@ -29,172 +31,192 @@ class _UserProfileState extends State<UserProfile> {
         ),
         elevation: 0,
         backgroundColor: Colors.white,
-        actions: [
-          IconButton(
+        leading: IconButton(
             padding: EdgeInsets.all(10.0),
-            icon: Icon(Icons.close),
+            icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop();
             },
             color: Colors.blue[800],
           ),
-        ],
       ),
       body: FutureBuilder(
           future: _getProfileData(widget.postUID),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return ListView(children: <Widget>[
-                Container(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.0),
-                        child: Container(
-                          width: 140.0,
-                          height: 140.0,
-                          child: CachedNetworkImage(
-                            imageUrl: _userInfo.userImage,
-                            imageBuilder: (context, imageProvider) => Container(
-                              width: 80.0,
-                              height: 80.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.cover),
+              return Snap(
+                controller: _appbarController.appBar,
+                child:
+                    ListView(controller: _appbarController, children: <Widget>[
+                  Container(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 20.0),
+                          child: Container(
+                            width: 140.0,
+                            height: 140.0,
+                            child: CachedNetworkImage(
+                              imageUrl: _userInfo.userImage,
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                width: 80.0,
+                                height: 80.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: imageProvider, fit: BoxFit.cover),
+                                ),
                               ),
-                            ),
-                            placeholder: (context, url) => Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400],
-                                border: Border.all(color: Colors.grey[400]),
-                                shape: BoxShape.circle,
+                              placeholder: (context, url) => Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[400],
+                                  border: Border.all(color: Colors.grey[400]),
+                                  shape: BoxShape.circle,
+                                ),
                               ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                             ),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: Text(
-                          _userInfo.userName,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: Text(
+                            _userInfo.userName,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 30),
+                          ),
                         ),
-                      ),
-                      ButtonTheme(
-                        minWidth: 30.0,
-                        height: 30.0,
-                        child: RaisedButton(
-                          onPressed: () {},
-                          child: Text("Follow"),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ButtonTheme(
+                            minWidth: 70,
+                            height: 40,
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              color: Colors.blue[800],
+                              onPressed: () async{
+                              },
+                              elevation: 4.0,
+                              splashColor: Colors.blue[800],
+                              child: Text(
+                                'Follow',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      Wrap(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 12, right: 12, top: 10),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              _userInfo.bio,
-                              style: TextStyle(fontSize: 20),
+                        Wrap(
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 12, right: 12, top: 10),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    _userInfo.bio,
+                                    style: TextStyle(fontSize: 20),
+                                  )),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 22.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        "Completed",
+                                        style: TextStyle(
+                                          color: Colors.blue[800],
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+                                      Text(
+                                        "${_userInfo.completed.length}",
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        "Followers",
+                                        style: TextStyle(
+                                          color: Colors.blue[800],
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+                                      Text(
+                                        "${0}",
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        "Following",
+                                        style: TextStyle(
+                                          color: Colors.blue[800],
+                                          fontSize: 22.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+                                      Text(
+                                        0.toString(),
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          color: Colors.black,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
                             )),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 22.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      "Completed",
-                                      style: TextStyle(
-                                        color: Colors.blue[800],
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "${_userInfo.completed}",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      "Followers",
-                                      style: TextStyle(
-                                        color: Colors.blue[800],
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "${_userInfo.numberFollowers}",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      "Following",
-                                      style: TextStyle(
-                                        color: Colors.blue[800],
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      _userInfo.numberFollowing.toString(),
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )),
-                    ],
+                  Divider(
+                    color: Colors.blue[800],
+                    height: 0,
                   ),
-                ),
-                Divider(
-                  color: Colors.blue[800],
-                  height: 0,
-                ),
-                BottomProfileFeed(
-                  postUID: widget.postUID,
-                ),
-              ]);
+                  BottomProfileFeed(
+                    postUID: widget.postUID,
+                  ),
+                ]),
+              );
             } else {
               return Container();
             }
@@ -213,9 +235,10 @@ class _UserProfileState extends State<UserProfile> {
       _userInfo.userImage = result.data['userImage'];
       _userInfo.bio = result.data['bio'];
       _userInfo.uid = result.data['uid'];
-      _userInfo.numberFollowers = result.data['numberFollowers'];
-      _userInfo.numberFollowing = result.data['numberFollowing'];
       _userInfo.completed = result.data['completed'];
+      _userInfo.inProgress = result.data['inProgress'];
+      _userInfo.followers = result.data['followers'];
+      _userInfo.following = result.data['following'];
     });
   }
 }
@@ -331,17 +354,15 @@ class _BottomProfileFeedState extends State<BottomProfileFeed> {
 
   Stream<QuerySnapshot> loadChalleges(BuildContext context, String uid) async* {
     yield* Firestore.instance
-        .collection('userData')
-        .document(uid)
         .collection('challenges')
+        .where("uid", isEqualTo: uid)
         .snapshots();
   }
 
   Stream<QuerySnapshot> loadPosts(BuildContext context, String uid) async* {
     yield* Firestore.instance
-        .collection('userData')
-        .document(uid)
         .collection('posts')
+        .where("uid", isEqualTo: uid)
         .snapshots();
   }
 }

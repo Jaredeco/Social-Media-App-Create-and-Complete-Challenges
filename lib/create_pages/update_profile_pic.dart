@@ -57,7 +57,7 @@ class _UpdateProfPicState extends State<UpdateProfPic> {
                       alignment: Alignment.center,
                       child: CircleAvatar(
                         radius: 100,
-                        backgroundColor: Color(0xff476cfb),
+                        backgroundColor: Colors.blue[800],
                         child: ClipOval(
                           child: new SizedBox(
                             width: 180.0,
@@ -93,25 +93,39 @@ class _UpdateProfPicState extends State<UpdateProfPic> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  RaisedButton(
-                    child: Text('Save'),
-                    color: Colors.green,
-                    textColor: Colors.white,
-                    onPressed: () async {
-                      if (_image != null) {
-                        await uploadPic(context);
-                        widget.userInfo.userImage = imageUrl;
-                        final uid =
-                            await Provider.of(context).auth.getCurrentUID();
-                        await Provider.of(context)
-                            .db
-                            .collection('userData')
-                            .document(uid)
-                            .setData(widget.userInfo.toJson());
-                        Navigator.pop(context, imageUrl);
-                      }
-                    },
-                  )
+                  ButtonTheme(
+                    minWidth: 120,
+                    height: 50,
+                    child: RaisedButton(
+                      elevation: 4.0,
+                      splashColor: Colors.blue[800],
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                            color: Colors.blue[800],
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                      onPressed: () async {
+                        if (_image != null) {
+                          await uploadPic(context);
+                          widget.userInfo.userImage = imageUrl;
+                          final uid =
+                              await Provider.of(context).auth.getCurrentUID();
+                          await Provider.of(context)
+                              .db
+                              .collection('userData')
+                              .document(uid)
+                              .setData(widget.userInfo.toJson());
+                          Navigator.pop(context, imageUrl);
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ],
