@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:SD/widgets/post_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/provider_widget.dart';
-import 'package:scroll_app_bar/scroll_app_bar.dart';
 import '../../create_pages/create_post.dart';
 import 'package:SD/models/post.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -16,13 +15,11 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
-  final _appbarController = ScrollController();
   @override
   Widget build(BuildContext context) {
     final newPost = new Post(null, null, null, null, null, null);
     return Scaffold(
-      appBar: ScrollAppBar(
-        controller: _appbarController,
+      appBar: AppBar(
         backgroundColor: Colors.white,
         leading: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -85,36 +82,32 @@ class _PostsState extends State<Posts> {
             return Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CreatePost(post: newPost)));
           }),
-      body: Snap(
-        controller: _appbarController.appBar,
-        child: ListView(
-          controller: _appbarController,
-          children: <Widget>[
-            Container(
-              child: StreamBuilder(
-                  stream: loadPosts(context),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height - 210,
-                        child: Center(
-                            child: Container(
-                                width: 40,
-                                height: 40,
-                                child: CircularProgressIndicator())),
-                      );
-                    return new ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (BuildContext context, int index) =>
-                          makeFeed(context, snapshot.data.documents[index]),
+      body: ListView(
+        children: <Widget>[
+          Container(
+            child: StreamBuilder(
+                stream: loadPosts(context),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height - 210,
+                      child: Center(
+                          child: Container(
+                              width: 40,
+                              height: 40,
+                              child: CircularProgressIndicator())),
                     );
-                  }),
-            ),
-          ],
-        ),
+                  return new ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        makeFeed(context, snapshot.data.documents[index]),
+                  );
+                }),
+          ),
+        ],
       ),
     );
   }

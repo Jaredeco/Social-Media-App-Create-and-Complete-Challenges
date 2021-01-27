@@ -1,3 +1,4 @@
+import 'package:SD/Pages/content_pages/Myprofile.dart';
 import 'package:SD/Pages/content_pages/challengePage.dart';
 import 'package:SD/Pages/content_pages/userProfile.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:SD/models/user_info.dart';
 import 'package:SD/widgets/provider_widget.dart';
+import 'package:like_button/like_button.dart';
 
 Widget myCardDetails(BuildContext context, DocumentSnapshot challenge) {
   return myCard(
@@ -32,9 +34,18 @@ Widget myCard(
   String uid,
   String challengeId,
 ) {
-  UserInfo _userInfo =
-      UserInfo(null, null, null, null, null, null, null, null);
+  UserInfo _userInfo = UserInfo(null, null, null, null, null, null, null, null);
   _getProfileData(uid) async {
+    final _curuid = await Provider.of(context).auth.getCurrentUID();
+    Future<DocumentSnapshot> docSnapshot = Provider.of(context)
+        .db
+        .collection('challenges')
+        .document(challengeId)
+        .get();
+    DocumentSnapshot doc = await docSnapshot;
+    bool isLiked = doc["likedBy"].contains(_curuid);
+    bool isDisliked = doc["likedBy"].contains(_curuid);
+    bool isCompleted = doc["likedBy"].contains(_curuid);
     await Provider.of(context)
         .db
         .collection('userData')
@@ -50,6 +61,32 @@ Widget myCard(
       _userInfo.followers = result.data['followers'];
       _userInfo.following = result.data['following'];
     });
+      return [isLiked, isDisliked, isCompleted];
+  }
+  _updateLikes(bool isLiked, String document)async{
+    final _uid = await Provider.of(context).auth.getCurrentUID();
+    if (isLiked) {
+      await Provider.of(context)
+          .db
+          .collection('challenges')
+          .document(challengeId)
+          .updateData({
+        document: FieldValue.arrayRemove([_uid])
+      });
+    } else {
+      await Provider.of(context)
+          .db
+          .collection('challenges')
+          .document(challengeId)
+          .updateData({
+        document: FieldValue.arrayUnion([_uid])
+      });
+    }
+  }
+
+  Future<bool> onLikeButtonTapped(bool isLiked) async {
+    _updateLikes(isLiked, "likedBy");
+    return !isLiked;
   }
 
   return InkWell(
@@ -59,7 +96,7 @@ Widget myCard(
     },
     child: FutureBuilder(
         future: _getProfileData(uid),
-        builder: (context1, snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -90,10 +127,17 @@ Widget myCard(
                         height: 50,
                         child: InkWell(
                           customBorder: CircleBorder(),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    UserProfile(postUID: _userInfo.uid)));
+                          onTap: () async {
+                            final _currUID =
+                                await Provider.of(context).auth.getCurrentUID();
+                            if (_userInfo.uid != _currUID) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      UserProfile(postUID: _userInfo.uid)));
+                            } else {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MyProfile()));
+                            }
                           },
                           child: CachedNetworkImage(
                             imageUrl: _userInfo.userImage,
@@ -121,11 +165,18 @@ Widget myCard(
                       SizedBox(
                         width: 15,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  UserProfile(postUID: _userInfo.uid)));
+                      InkWell(
+                        onTap: () async {
+                          final _currUID =
+                              await Provider.of(context).auth.getCurrentUID();
+                          if (_userInfo.uid != _currUID) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    UserProfile(postUID: _userInfo.uid)));
+                          } else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => MyProfile()));
+                          }
                         },
                         child: Text(
                           _userInfo.userName,
@@ -156,10 +207,20 @@ Widget myCard(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    rowItem(Icons.arrow_upward, numberLikes.toString()),
-                    rowItem(Icons.arrow_downward, numberDislikes.toString()),
-                    rowItem(Icons.done, numberCompleted.toString()),
-                    rowItem(Icons.comment, numberCommments.toString()),
+                    LikeButton(
+                      isLiked: snapshot.data[0],
+                      likeCount: numberLikes,
+                      likeBuilder: (bool isLiked) {
+                        return Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: isLiked ? Colors.blue[800] : Colors.grey,
+                        );
+                      },
+                      onTap: onLikeButtonTapped,
+                    ),
+
+                    // LikeButton(likeCount: numberDislikes,),
+                    // LikeButton(likeCount: numberCompleted),
                   ],
                 ),
                 SizedBox(
@@ -171,21 +232,5 @@ Widget myCard(
             return Container();
           }
         }),
-  );
-}
-
-Widget rowItem(IconData dataIcon, String data) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-      children: [
-        Icon(
-          dataIcon,
-          color: Colors.blue[800],
-        ),
-        SizedBox(width: 5),
-        Text(data),
-      ],
-    ),
   );
 }

@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/provider_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:SD/models/challenge.dart';
-import 'package:scroll_app_bar/scroll_app_bar.dart';
 import 'Myprofile.dart';
 
 class DoneChallenges extends StatefulWidget {
@@ -17,14 +16,12 @@ class DoneChallenges extends StatefulWidget {
 
 class _DoneChallengesState extends State<DoneChallenges> {
   bool _isSearching = false;
-  final _appbarController = ScrollController(); 
   @override
   Widget build(BuildContext context) {
     final newChallenge =
         new Challenge(null, null, null, null, null, null, null, null, null);
     return Scaffold(
-      appBar: ScrollAppBar(
-        controller: _appbarController,
+      appBar: AppBar(
         backgroundColor: Colors.white,
         leading: _isSearching
             ? IconButton(
@@ -81,9 +78,8 @@ class _DoneChallengesState extends State<DoneChallenges> {
                 autofocus: true,
               )
             : Text(
-                "Explore",
-                style: TextStyle(
-                    color: Colors.blue[800]),
+                "My Challenges",
+                style: TextStyle(color: Colors.blue[800]),
               ),
         actions: <Widget>[
           IconButton(
@@ -116,16 +112,12 @@ class _DoneChallengesState extends State<DoneChallenges> {
                                 height: 40,
                                 child: CircularProgressIndicator())),
                       );
-                    return Snap(
-                      controller: _appbarController.appBar,
-                                          child: new ListView.builder(
-                        controller: _appbarController,
-                          shrinkWrap: true,
-                          itemCount: snapshot.data.documents.length,
-                          itemBuilder: (BuildContext context, int index) =>
-                              myCardDetails(
-                                  context, snapshot.data.documents[index])),
-                    );
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            myCardDetails(
+                                context, snapshot.data.documents[index]));
                   }),
             ),
     );

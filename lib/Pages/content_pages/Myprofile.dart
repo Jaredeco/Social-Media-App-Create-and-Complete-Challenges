@@ -1,3 +1,4 @@
+import 'package:SD/Pages/first_view.dart';
 import 'package:SD/create_pages/update_profile_pic.dart';
 import 'package:flutter/material.dart';
 import 'package:SD/models/user_info.dart';
@@ -6,7 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:SD/widgets/yescardContent.dart';
 import 'package:SD/widgets/post_card.dart';
-import 'package:scroll_app_bar/scroll_app_bar.dart';
 
 class MyProfile extends StatefulWidget {
   var pushedUrl;
@@ -16,7 +16,6 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
-  final _appbarController = ScrollController();
   UserInfo _userInfo = UserInfo("", "", "", "", [], [], [], []);
   TextEditingController _userBioController = TextEditingController();
 
@@ -24,8 +23,7 @@ class _MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: ScrollAppBar(
-        controller: _appbarController,
+      appBar: AppBar(
         title: Text(
           "Profile",
           style: TextStyle(color: Colors.blue[800]),
@@ -45,8 +43,10 @@ class _MyProfileState extends State<MyProfile> {
           IconButton(
             padding: EdgeInsets.all(10.0),
             icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              Provider.of(context).auth.signOut();
+            onPressed: () async {
+              await Provider.of(context).auth.signOut();
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => FirstView()));
             },
             color: Colors.red,
           ),
@@ -56,197 +56,192 @@ class _MyProfileState extends State<MyProfile> {
           future: _getProfileData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return Snap(
-                controller: _appbarController.appBar,
-                child: SingleChildScrollView(
-                  controller: _appbarController,
-                  child: Column(children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.0),
-                      child: Stack(
-                        fit: StackFit.loose,
-                        children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                width: 140.0,
-                                height: 140.0,
-                                child: CachedNetworkImage(
-                                  imageUrl: widget.pushedUrl == null
-                                      ? _userInfo.userImage
-                                      : widget.pushedUrl,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    width: 80.0,
-                                    height: 80.0,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover),
-                                    ),
-                                  ),
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  InkWell(
-                                    customBorder: CircleBorder(),
-                                    onTap: () {
-                                      _awaitReturnValueFromSecondScreen(
-                                          context);
-                                    },
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.blue[800],
-                                      radius: 25.0,
-                                      child: Icon(
-                                        Icons.camera_alt,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: Text(
-                        _userInfo.userName,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30),
-                      ),
-                    ),
-                    Wrap(
-                      children: [
-                        FlatButton.icon(
-                          padding: EdgeInsets.only(left: 8),
-                          onPressed: () {
-                            _userEditBottomSheet(context);
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0))),
-                          label: Text(
-                            'Edit Bio',
-                            style: TextStyle(
-                                color: Colors.blue[800], fontSize: 17),
-                          ),
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.blue[800],
-                          ),
-                          color: Colors.white,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 12, right: 12),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                _userInfo.bio,
-                                style: TextStyle(fontSize: 20),
-                              )),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 19.0),
-                        child: Row(
+              return SingleChildScrollView(
+                child: Column(children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: Stack(
+                      fit: StackFit.loose,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Completed",
-                                    style: TextStyle(
-                                      color: Colors.blue[800],
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            Container(
+                              width: 140.0,
+                              height: 140.0,
+                              child: CachedNetworkImage(
+                                imageUrl: widget.pushedUrl == null
+                                    ? _userInfo.userImage
+                                    : widget.pushedUrl,
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover),
                                   ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Text(
-                                    "${_userInfo.completed.length}",
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.black,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Followers",
-                                    style: TextStyle(
-                                      color: Colors.blue[800],
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Text(
-                                    "${_userInfo.followers.length}",
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.black,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "Following",
-                                    style: TextStyle(
-                                      color: Colors.blue[800],
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Text(
-                                    "${_userInfo.following.length}",
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.black,
-                                    ),
-                                  )
-                                ],
+                                ),
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
                               ),
                             ),
                           ],
-                        )),
-                    Divider(
-                      color: Colors.blue[800],
-                      height: 0,
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(top: 90.0, right: 100.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                InkWell(
+                                  customBorder: CircleBorder(),
+                                  onTap: () {
+                                    _awaitReturnValueFromSecondScreen(context);
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.blue[800],
+                                    radius: 25.0,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )),
+                      ],
                     ),
-                    BottomProfileFeed(),
-                  ]),
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Text(
+                      _userInfo.userName,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                    ),
+                  ),
+                  Wrap(
+                    children: [
+                      FlatButton.icon(
+                        padding: EdgeInsets.only(left: 8),
+                        onPressed: () {
+                          _userEditBottomSheet(context);
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        label: Text(
+                          'Edit Bio',
+                          style:
+                              TextStyle(color: Colors.blue[800], fontSize: 17),
+                        ),
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.blue[800],
+                        ),
+                        color: Colors.white,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 12, right: 12),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _userInfo.bio,
+                              style: TextStyle(fontSize: 20),
+                            )),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 19.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  "Completed",
+                                  style: TextStyle(
+                                    color: Colors.blue[800],
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                Text(
+                                  "${_userInfo.completed.length}",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.black,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  "Followers",
+                                  style: TextStyle(
+                                    color: Colors.blue[800],
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                Text(
+                                  "${_userInfo.followers.length}",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.black,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  "Following",
+                                  style: TextStyle(
+                                    color: Colors.blue[800],
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                Text(
+                                  "${_userInfo.following.length}",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.black,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                  Divider(
+                    color: Colors.blue[800],
+                    height: 0,
+                  ),
+                  BottomProfileFeed(),
+                ]),
               );
             } else {
               return Container();

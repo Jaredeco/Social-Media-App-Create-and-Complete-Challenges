@@ -6,6 +6,8 @@ import 'package:SD/models/user_info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:SD/Pages/content_pages/userProfile.dart';
 import 'package:SD/widgets/comment_bottomsheet.dart';
+import 'package:SD/Pages/content_pages/Myprofile.dart';
+import 'package:like_button/like_button.dart';
 
 class ChallengePage extends StatefulWidget {
   var challengeId;
@@ -49,7 +51,7 @@ class _ChallengePageState extends State<ChallengePage> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 return FutureBuilder(
-                    future: _getProfileData(),
+                    future: _getProfileData(_challenge.uid),
                     builder: (context, snapshot1) {
                       if (snapshot1.connectionState == ConnectionState.done) {
                         return Column(
@@ -84,13 +86,24 @@ class _ChallengePageState extends State<ChallengePage> {
                                     height: 50,
                                     child: InkWell(
                                       customBorder: CircleBorder(),
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UserProfile(
-                                                        postUID:
-                                                            _userInfo.uid)));
+                                      onTap: () async {
+                                        final _currUID =
+                                            await Provider.of(context)
+                                                .auth
+                                                .getCurrentUID();
+                                        if (_userInfo.uid != _currUID) {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UserProfile(
+                                                          postUID:
+                                                              _userInfo.uid)));
+                                        } else {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MyProfile()));
+                                        }
                                       },
                                       child: CachedNetworkImage(
                                         imageUrl: _userInfo.userImage,
@@ -123,12 +136,25 @@ class _ChallengePageState extends State<ChallengePage> {
                                   SizedBox(
                                     width: 15,
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) => UserProfile(
-                                                  postUID: _userInfo.uid)));
+                                  InkWell(
+                                    onTap: () async {
+                                      final _currUID =
+                                          await Provider.of(context)
+                                              .auth
+                                              .getCurrentUID();
+                                      if (_userInfo.uid != _currUID) {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UserProfile(
+                                                        postUID:
+                                                            _userInfo.uid)));
+                                      } else {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MyProfile()));
+                                      }
                                     },
                                     child: Text(
                                       _userInfo.userName,
@@ -160,16 +186,10 @@ class _ChallengePageState extends State<ChallengePage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                rowItem(Icons.arrow_upward,
-                                    _challenge.likedBy.length, "likedBy"),
-                                rowItem(Icons.arrow_downward,
-                                    _challenge.dislikedBy.length, "dislikedBy"),
-                                rowItem(
-                                    Icons.done,
-                                    _challenge.completedBy.length,
-                                    "completedBy"),
-                                rowItem(Icons.comment,
-                                    _challenge.comments.length, "comment"),
+                                LikeButton(
+                                  
+                                  likeCount: _challenge.likedBy.length,
+                                )
                               ],
                             ),
                             Padding(
@@ -247,12 +267,11 @@ class _ChallengePageState extends State<ChallengePage> {
     });
   }
 
-  _getProfileData() async {
-    final _uid = await Provider.of(context).auth.getCurrentUID();
+  _getProfileData(uid) async {
     await Provider.of(context)
         .db
         .collection('userData')
-        .document(_uid)
+        .document(uid)
         .get()
         .then((result) {
       _userInfo.userName = result.data['userName'];
@@ -285,60 +304,40 @@ class _ChallengePageState extends State<ChallengePage> {
     });
   }
 
-  Widget rowItem(IconData dataIcon, int data, String document) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          dataIcon == Icons.done
-              ? Icon(
-                  dataIcon,
-                  color: Colors.blue[800],
-                )
-              : IconButton(
-                  icon: Icon(
-                    dataIcon,
-                    color: Colors.blue[800],
-                  ),
-                  onPressed: () async {
-                    if (document != "comment") {
-                      final _uid =
-                          await Provider.of(context).auth.getCurrentUID();
-                      Future<DocumentSnapshot> docSnapshot =
-                          Provider.of(context)
-                              .db
-                              .collection('challenges')
-                              .document(widget.challengeId)
-                              .get();
-                      DocumentSnapshot doc = await docSnapshot;
-                      if (doc[document].contains(_uid)) {
-                        await Provider.of(context)
-                            .db
-                            .collection('challenges')
-                            .document(widget.challengeId)
-                            .updateData({
-                          document: FieldValue.arrayRemove([_uid])
-                        });
-                      } else {
-                        await Provider.of(context)
-                            .db
-                            .collection('challenges')
-                            .document(widget.challengeId)
-                            .updateData({
-                          document: FieldValue.arrayUnion([_uid])
-                        });
-                      }
-                      setState(() {});
-                    } else {
-                      commentSheet(context, widget.challengeId);
-                    }
-                  },
-                ),
-          SizedBox(width: 5),
-          Text("$data"),
-        ],
-      ),
-    );
+  Future<bool> onLikeButtonTapped(String document) async {
+    bool isLiked;
+    String document;
+    if (document != "comment") {
+      final _uid = await Provider.of(context).auth.getCurrentUID();
+      Future<DocumentSnapshot> docSnapshot = Provider.of(context)
+          .db
+          .collection('challenges')
+          .document(widget.challengeId)
+          .get();
+      DocumentSnapshot doc = await docSnapshot;
+      isLiked = doc[document].contains(_uid);
+      if (isLiked) {
+        await Provider.of(context)
+            .db
+            .collection('challenges')
+            .document(widget.challengeId)
+            .updateData({
+          document: FieldValue.arrayRemove([_uid])
+        });
+      } else {
+        await Provider.of(context)
+            .db
+            .collection('challenges')
+            .document(widget.challengeId)
+            .updateData({
+          document: FieldValue.arrayUnion([_uid])
+        });
+        setState(() {});
+      }
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => CommentPage(challengeId: widget.challengeId)));
+    }
+    return !isLiked;
   }
 }
-
